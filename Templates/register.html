@@ -12,52 +12,73 @@
 {% endblock %}
 
 {% block main %}
+    <section style="position:absolute; TOP:180px; LEFT:500px; WIDTH:500px; HEIGHT:600px ">
+        <h5 style="position:relative; LEFT:45px;"> Register for the Online Polling System</h5> <br><br>
+        <form>
+            <! First Name and Last Name -->
+            <div class="form-group row">
+                <div class="form-group col-md-6" style="text">
+                    <label for="f_name">First Name</label>
+                    <input type="text" class="form-control" id="f_name" placeholder="First Name">
+                </div>
+                <div class="form-group col-md-6" style="text">
+                    <label for="l_name">Last Name</label>
+                    <input type="text" class="form-control" id="l_name" placeholder="Last Name">
+                </div>
+            </div>
 
-  <form>
-    <div class="form-row">
-      <div class="form-group col-md-6">
-        <label for="inputEmail4">Email</label>
-        <input type="email" class="form-control" id="inputEmail4" placeholder="Email">
-      </div>
-      <div class="form-group col-md-6">
-        <label for="inputPassword4">Password</label>
-        <input type="password" class="form-control" id="inputPassword4" placeholder="Password">
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="inputAddress">Address</label>
-      <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
-    </div>
-    <div class="form-group">
-      <label for="inputAddress2">Address 2</label>
-      <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
-    </div>
-    <div class="form-row">
-      <div class="form-group col-md-6">
-        <label for="inputCity">City</label>
-        <input type="text" class="form-control" id="inputCity">
-      </div>
-      <div class="form-group col-md-4">
-        <label for="inputState">State</label>
-        <select id="inputState" class="form-control">
-          <option selected>Choose...</option>
-          <option>...</option>
-        </select>
-      </div>
-      <div class="form-group col-md-2">
-        <label for="inputZip">Zip</label>
-        <input type="text" class="form-control" id="inputZip">
-      </div>
-    </div>
-    <div class="form-group">
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="gridCheck">
-        <label class="form-check-label" for="gridCheck">
-          Check me out
-        </label>
-      </div>
-    </div>
-    <button type="submit" class="btn btn-primary">Sign in</button>
-  </form>
+            <! Password and Confirm Password -->
 
+            <div class="form-group row">
+                <div class="form-group col-md-6">
+                    <label for="pswd">Password</label>
+                    <input type="password" class="form-control" id="pswd" placeholder="Password">
+                </div>
+                <div class="form-group col-md-6">
+                   <label for="pswd">Confirm Password</label>
+                   <input type="password" class="form-control" id="re_pswd" placeholder="Confirm Password">
+                </div>
+            </div>
+
+            <! DOB -->
+            <div class="form-group row">
+                <div class="form-group col-md-6">
+                    <label for="dob">Date of Birth</label>
+                    <input type="date" class="form-control" id="dob">
+                </div>
+            </div>
+
+            <! State and Mobile Number -->
+            <div class="form-group row">
+                <div class="form-group col-md-6">
+                    <label for="inputState">State</label>
+                    <select id="inputState" class="form-control">
+                        <option selected>Choose...</option>
+                        <option>...</option>
+                    </select>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label for="mobile">Mobile Number</label>
+                    <input type="tel" class="form-control" id="mobile" name="phone">
+                </div>
+            </div>
+
+            <! Gender -->
+            <div class="form-group column" style="position:relative; TOP:5px;">
+                <div class="form-group col-md-10">
+                    <label for="radio"> Gender </label>
+                    <input type="radio" id="male" name="Gender" value="Male"  style="position:relative; LEFT:25px;">
+                    <label for="male"  style="position:relative; LEFT:27px;" >Male</label>
+                    <input type="radio" id="female" name="Gender" value="Female" style="position:relative; LEFT:52px;">
+                    <label for="female" style="position:relative; LEFT:54px;">Female</label>
+                    <input type="radio" id="other" name="Gender" value="Other" style="position:relative; LEFT:79px;">
+                    <label for="other" style="position:relative; LEFT:81px;">Other</label> <br>
+
+            </div>
+
+            <button style="position:relative; TOP:30px; LEFT:200px;" type="submit" class="btn btn-primary">Register</button>
+
+        </form>
+    </section>
 {% endblock %}
