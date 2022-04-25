@@ -33,9 +33,11 @@ def login_required(f):
     return decorated_function
 
 
+# @app.route("/login", methods)
+
 @app.route("/")
 def index():
-    return render_template(index.html)
+    return render_template(register.html)
 
 
 if __name__ == '___main__':
