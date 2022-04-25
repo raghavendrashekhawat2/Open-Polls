@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask, flash, redirect, render_template, request, session, jsonify
-from flask_sessions import Session
+from flask_session import Session
 from tempfile import mkdtemp
 from functools import wraps
 
@@ -37,7 +37,7 @@ def login_required(f):
 
 @app.route("/")
 def index():
-    return render_template(register.html)
+    return render_template("layout.html")
 
 
 if __name__ == '___main__':
