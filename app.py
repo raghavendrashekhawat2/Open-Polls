@@ -32,7 +32,7 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-
+#new
 # @app.route("/login", methods)
 
 @app.route("/")
