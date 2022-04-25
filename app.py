@@ -37,7 +37,7 @@ def login_required(f):
 
 @app.route("/")
 def index():
-    return render_template("layout.html")
+    return render_template("register.html")
 
 
 if __name__ == '___main__':
