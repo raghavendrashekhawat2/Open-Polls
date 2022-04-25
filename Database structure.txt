@@ -1,0 +1,16 @@
+User database for login
+
+User id     username        password(hash)
+"""
+c.execute("""CREATE TABLE login_creds (
+                userid INTEGER PRIMARY KEY,
+                username VARCHAR(30) NOT NULL,
+                password TEXT NOT NULL
+                ) """)
+"""
+
+User data
+
+User id     Name        DOB         Gender          Mobile Number
+
+
