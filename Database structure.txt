@@ -1,16 +1,28 @@
 User database for login
 
-User id     username        password(hash)
-"""
+Table1 name -> login_creds
+
+userid     username        password(hash)
+
+
 c.execute("""CREATE TABLE login_creds (
                 userid INTEGER PRIMARY KEY,
                 username VARCHAR(30) NOT NULL,
                 password TEXT NOT NULL
                 ) """)
-"""
-
-User data
-
-User id     Name        DOB         Gender          Mobile Number
 
 
+
+Table2 name -> user_data
+
+userid     First_Name      Last_Name        DOB         State          Mob_Number       Gender
+
+c.execute("""CREATE TABLE user_data (
+                userid INTEGER PRIMARY KEY,
+                First_Name VARCHAR(30) NOT NULL,
+                Last_Name VARCHAR(30) NOT NULL,
+                Dob DATE NOT NULL,
+                State VARCHAR(50) NOT NULL,
+                Mob_Number TEXT NOT NULL,
+                Gender VARCHAR(6) NOT NULL,
+                ) """)
