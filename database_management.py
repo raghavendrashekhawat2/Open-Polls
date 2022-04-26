@@ -10,7 +10,9 @@ c = conn.cursor()
 # c.execute("""INSERT INTO login_creds (username, password) VALUES( 'Cham', 'hamp')""")
 
 
-c.execute("""delete from login_creds where userid == 1 AND userid == 2""")
+c.execute("""delete from user_data where userid == 1 """)
+# c.execute(""" SELECT * FROM login_creds""")
+
 conn.commit()
 row = c.fetchall()
 
