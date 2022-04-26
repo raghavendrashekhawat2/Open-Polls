@@ -34,11 +34,9 @@ def login_required(f):
     return decorated_function
 
 
-@app.route("/login", methods=['POST', 'GET'])
-def login():
-    conn = sqlite3.connect('Voting_database.db')
-    c = conn.cursor()
-    return render_template("login.html")
+@app.route("/")
+def index():
+    return render_template("welcome.html")
 
 
 # Function for /register route
@@ -62,7 +60,8 @@ def register():
         gender = request.form.get("gender")
 
         # Check if all the fields are filled
-        if not (f_name and l_name and username and email and password and re_password and dob and state and mobile and gender):
+        if not (f_name and l_name and username and email and password and re_password and dob and state and mobile and
+                gender):
             # print("debug time", gender, "\n", state, "\n", f_name, "\n", l_name, "\n", username, "\n", password, "\n",
                   # re_password, "\n", dob, "\n", mobile)
             error_message = "All the fields in the form must be filled"
@@ -79,7 +78,6 @@ def register():
         conn.commit()
         row = c.fetchall()
         if len(row) > 0:
-            print (row)
             error_message = "Username is already taken"
             print(error_message)
             return render_template("apology.html", message=error_message)
@@ -89,11 +87,9 @@ def register():
         conn.commit()
         row = c.fetchall()
         if len(row) > 0:
-            print (row)
             error_message = "Email_id already exists"
             print(error_message)
             return render_template("apology.html", message=error_message)
-
 
         # Generate password hash
         hashed_password = generate_password_hash(password)
@@ -116,9 +112,42 @@ def register():
         return render_template("register.html")
 
 
-@app.route("/")
-def index():
-    return render_template("login.html")
+@app.route("/login", methods=['POST', 'GET'])
+def login():
+    conn = sqlite3.connect('Voting_database.db')
+    c = conn.cursor()
+
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("pswd")
+        # opt = request.form.get("otp")
+        print(password)
+        if not (username and password):
+            error_message = "Enter username and password"
+            print(error_message)
+            return render_template("apology.html", message=error_message)
+
+        c.execute("SELECT * FROM login_creds WHERE username = :u ", {"u": username})
+        rows = c.fetchone()
+        # print(generate_password_hash(password))
+
+        if not check_password_hash(rows[2], password):
+            error_message = "Invalid username and password"
+            print(error_message)
+            return render_template("apology.html", message=error_message)
+
+        session["user_id"] = rows[0]
+        return render_template("home.html")
+
+    else:
+        return render_template("login.html")
+
+
+@app.route("/logout", methods=["GET"])
+@login_required
+def logout():
+    session.clear()
+    return redirect("/")
 
 
 if __name__ == '___main__':
