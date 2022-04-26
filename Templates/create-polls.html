@@ -1,0 +1,92 @@
+{% extends "layout.html" %}
+{% block title %}
+	Create Polls
+{% endblock %}
+
+{% block main %}
+<style>
+    .pname{
+        resize : none;
+    }
+</style>
+<script type="text/javascript">
+    window.onload = addFields;
+   function changeFunc() {
+    var selectBox = document.getElementById("options_no");
+    var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+    alert(selectedValue);
+   }
+   function addFields(){
+            // Generate a dynamic number of inputs
+            var number = document.getElementById("options_no").value;
+            // Get the element where the inputs will be added to
+            var container = document.getElementById("container");
+            // Remove every child it had before
+            while (container.hasChildNodes()) {
+                container.removeChild(container.lastChild);
+            }
+            for (i = 1; i <= number; i++){
+                outer_div = document.createElement("div");
+                outer_div.className = "form-group row";
+                inner_div = document.createElement("div");
+                inner_div.className = "form-group col-md-8";
+                inner_div.style = "text";
+                label = document.createElement("label");
+                label.htmlFor = "option"+i;
+                label.innerHTML = "Option "+i;
+                input = document.createElement("input");
+                input.type = "text";
+                input.className ="form-control";
+                input.placeholder = "Enter Option "+i;
+                input.name = label.htmlFor;
+                inner_div.appendChild(label);
+                inner_div.appendChild(input);
+                outer_div.appendChild(inner_div);
+                container.appendChild(outer_div);
+            }
+        }
+  </script>
+	<h5 style="position:absolute; LEFT:550px; TOP:150px;">Create Your Poll</h5> <br><br>
+    <section style="position:absolute; TOP:200px; LEFT:100px; WIDTH:500px; HEIGHT:500px ">
+
+        <form action="/" method="POST">
+
+            <! Poll Name -->
+            <div class="form-group row">
+                <div class="form-group col-md-8" style="text">
+                    <label for="p_name">Poll Name</label>
+                    <input type="text" class="form-control" placeholder="Poll Name" name="poll_name" id = "p_name">
+                </div>
+            </div>
+
+            <! Enter Your Question -->
+            <div class="form-group row">
+                <div class="form-group col-md-6" style="text">
+                    <label for="ques">Question</label>
+                    <textarea placeholder="Enter your Question" name="question" id = "ques" rows="4" cols="50"></textarea>
+                </div>
+            </div>
+
+            <! no of Options -->
+            <div class="form-group row">
+                <div class="form-group col-md-2">
+                    <label for="options_no">Options</label>
+                    <select id="options_no" class="form-control" name="options_numbers" onchange="addFields();">
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                    </select>
+                </div>
+            </div>
+            <! option fields generated using js-->
+                <div id = "container"></div>
+
+            <button style="position:relative; TOP:30px; LEFT:200px;" type="submit" class="btn btn-primary">Register</button>
+
+        </form>
+    </section>
+{% endblock %}
