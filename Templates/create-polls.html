@@ -8,6 +8,11 @@
     .pname{
         resize : none;
     }
+    #ABC
+    {
+        border : 1px solid red;
+    }
+}
 </style>
 <script type="text/javascript">
     window.onload = addFields;
@@ -46,8 +51,8 @@
             }
         }
   </script>
-	<h5 style="position:absolute; LEFT:550px; TOP:150px;">Create Your Poll</h5> <br><br>
-    <section style="position:absolute; TOP:200px; LEFT:100px; WIDTH:500px; HEIGHT:500px ">
+	<h5 style="position:absolute; margin-left: auto; margin-right: auto; left: 0; right: 0; text-align: center; TOP:150px;">Create Your Poll</h5> <br><br>
+    <section style=" position:absolute; TOP:200px; LEFT:100px; WIDTH:500px; HEIGHT:500px ">
 
         <form action="/" method="POST">
 
@@ -88,5 +93,7 @@
             <button style="position:relative; TOP:30px; LEFT:200px;" type="submit" class="btn btn-primary">Register</button>
 
         </form>
+    </section>
+    <section style=" position:absolute; TOP:200px; Right:100px; WIDTH:500px; HEIGHT:500px " id = "ABC">
     </section>
 {% endblock %}
