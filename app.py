@@ -38,10 +38,6 @@ def login_required(f):
 def login():
     conn = sqlite3.connect('Voting_database.db')
     c = conn.cursor()
-
-
-
-
     return render_template("login.html")
 
 
