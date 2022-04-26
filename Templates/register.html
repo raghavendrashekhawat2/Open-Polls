@@ -1,29 +1,31 @@
 {% extends "layout.html" %}
 {% block title %}
-	<title>
-		Register
-	</title>
-	<style>
-		body{
-			background-color: white ;
-			}
-	</style>
-
+	Register
 {% endblock %}
 
 {% block main %}
-    <section style="position:absolute; TOP:180px; LEFT:500px; WIDTH:500px; HEIGHT:600px ">
-        <h5 style="position:relative; LEFT:45px;"> Register for the Online Polling System</h5> <br><br>
-        <form>
+    <h5 style="position:absolute; OP:180px; LEFT:500px; TOP:190px;"> Register for the Online Polling System</h5> <br><br>
+    <section style="position:absolute; TOP:230px; LEFT:500px; WIDTH:500px; HEIGHT:600px ">
+
+        <form action="/register" method="POST">
+
             <! First Name and Last Name -->
             <div class="form-group row">
                 <div class="form-group col-md-6" style="text">
                     <label for="f_name">First Name</label>
-                    <input type="text" class="form-control" id="f_name" placeholder="First Name">
+                    <input type="text" class="form-control" id="f_name" placeholder="First Name" name="first_name">
                 </div>
                 <div class="form-group col-md-6" style="text">
                     <label for="l_name">Last Name</label>
-                    <input type="text" class="form-control" id="l_name" placeholder="Last Name">
+                    <input type="text" class="form-control" id="l_name" placeholder="Last Name" name="last_name">
+                </div>
+            </div>
+
+            <! Username -->
+            <div class="form-group row">
+                <div class="form-group col-md-6" style="text">
+                    <label for="u_name">Username</label>
+                    <input type="text" class="form-control" id="u_name" placeholder="Enter your Username" name="username">
                 </div>
             </div>
 
@@ -32,11 +34,11 @@
             <div class="form-group row">
                 <div class="form-group col-md-6">
                     <label for="pswd">Password</label>
-                    <input type="password" class="form-control" id="pswd" placeholder="Password">
+                    <input type="password" class="form-control" id="pswd" placeholder="Password" name="password">
                 </div>
                 <div class="form-group col-md-6">
                    <label for="pswd">Confirm Password</label>
-                   <input type="password" class="form-control" id="re_pswd" placeholder="Confirm Password">
+                   <input type="password" class="form-control" id="re_pswd" placeholder="Confirm Password" name="re_password">
                 </div>
             </div>
 
@@ -44,7 +46,7 @@
             <div class="form-group row">
                 <div class="form-group col-md-6">
                     <label for="dob">Date of Birth</label>
-                    <input type="date" class="form-control" id="dob">
+                    <input type="date" class="form-control" id="dob" name="dateofbirth">
                 </div>
             </div>
 
@@ -52,9 +54,43 @@
             <div class="form-group row">
                 <div class="form-group col-md-6">
                     <label for="inputState">State</label>
-                    <select id="inputState" class="form-control">
-                        <option selected>Choose...</option>
-                        <option>...</option>
+                    <select id="inputState" class="form-control" name="state">
+                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                        <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                        <option value="Assam">Assam</option>
+                        <option value="Bihar">Bihar</option>
+                        <option value="Chandigarh">Chandigarh</option>
+                        <option value="Chhattisgarh">Chhattisgarh</option>
+                        <option value="Dadar and Nagar Haveli">Dadar and Nagar Haveli</option>
+                        <option value="Daman and Diu">Daman and Diu</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Lakshadweep">Lakshadweep</option>
+                        <option value="Puducherry">Puducherry</option>
+                        <option value="Goa">Goa</option>
+                        <option value="Gujarat">Gujarat</option>
+                        <option value="Haryana">Haryana</option>
+                        <option value="Himachal Pradesh">Himachal Pradesh</option>
+                        <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                        <option value="Jharkhand">Jharkhand</option>
+                        <option value="Karnataka">Karnataka</option>
+                        <option value="Kerala">Kerala</option>
+                        <option value="Madhya Pradesh">Madhya Pradesh</option>
+                        <option value="Maharashtra">Maharashtra</option>
+                        <option value="Manipur">Manipur</option>
+                        <option value="Meghalaya">Meghalaya</option>
+                        <option value="Mizoram">Mizoram</option>
+                        <option value="Nagaland">Nagaland</option>
+                        <option value="Odisha">Odisha</option>
+                        <option value="Punjab">Punjab</option>
+                        <option value="Rajasthan">Rajasthan</option>
+                        <option value="Sikkim">Sikkim</option>
+                        <option value="Tamil Nadu">Tamil Nadu</option>
+                        <option value="Telangana">Telangana</option>
+                        <option value="Tripura">Tripura</option>
+                        <option value="Uttar Pradesh">Uttar Pradesh</option>
+                        <option value="Uttarakhand">Uttarakhand</option>
+                        <option value="West Bengal">West Bengal</option>
                     </select>
                 </div>
 
@@ -68,13 +104,13 @@
             <div class="form-group column" style="position:relative; TOP:5px;">
                 <div class="form-group col-md-10">
                     <label for="radio"> Gender </label>
-                    <input type="radio" id="male" name="Gender" value="Male"  style="position:relative; LEFT:25px;">
+                    <input type="radio" id="male" name="gender" value="Male"  style="position:relative; LEFT:25px;">
                     <label for="male"  style="position:relative; LEFT:27px;" >Male</label>
-                    <input type="radio" id="female" name="Gender" value="Female" style="position:relative; LEFT:52px;">
+                    <input type="radio" id="female" name="gender" value="Female" style="position:relative; LEFT:52px;">
                     <label for="female" style="position:relative; LEFT:54px;">Female</label>
-                    <input type="radio" id="other" name="Gender" value="Other" style="position:relative; LEFT:79px;">
+                    <input type="radio" id="other" name="gender" value="Other" style="position:relative; LEFT:79px;">
                     <label for="other" style="position:relative; LEFT:81px;">Other</label> <br>
-
+                </div>
             </div>
 
             <button style="position:relative; TOP:30px; LEFT:200px;" type="submit" class="btn btn-primary">Register</button>
