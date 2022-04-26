@@ -15,7 +15,7 @@ c.execute("""CREATE TABLE login_creds (
 
 Table2 name -> user_data
 
-userid     First_Name      Last_Name        DOB         State          Mob_Number       Gender
+userid     First_Name      Last_Name        DOB         State          Mob_Number       Gender      Email
 
 c.execute("""CREATE TABLE user_data (
                 userid INTEGER PRIMARY KEY,
@@ -25,4 +25,5 @@ c.execute("""CREATE TABLE user_data (
                 State VARCHAR(50) NOT NULL,
                 Mob_Number TEXT NOT NULL,
                 Gender VARCHAR(6) NOT NULL,
+                Email TEXT NOT NULL
                 ) """)

@@ -5,7 +5,7 @@
 
 {% block main %}
     <h5 style="position:absolute; LEFT:550px; TOP:150px;"> Register for the Online Polling System</h5> <br><br>
-    <section style="position:absolute; TOP:200px; LEFT:500px; WIDTH:500px; HEIGHT:500px " >
+    <section style="position:absolute; TOP:200px; LEFT:500px; WIDTH:500px; HEIGHT:500px ">
 
         <form action="/register" method="POST">
 
@@ -26,6 +26,14 @@
                 <div class="form-group col-md-6" style="text">
                     <label for="u_name">Username</label>
                     <input type="text" class="form-control" id="u_name" placeholder="Enter your Username" name="username">
+                </div>
+            </div>
+
+            <! Email-Id -->
+            <div class="form-group row">
+                <div class="form-group col-md-6" style="text">
+                    <label for="e_id">Email</label>
+                    <input type="email" class="form-control" id="e_id" placeholder="Enter your Email id" name="email">
                 </div>
             </div>
 
