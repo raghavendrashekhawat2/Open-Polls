@@ -32,12 +32,32 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-#new
-# @app.route("/login", methods)
+
+@app.route("/login", methods=['POST', 'GET'])
+def login():
+    #asdas
+    print("yes")
+
+
+@app.route("/register", methods=['POST', 'GET'])
+def register():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        re_password = request.form.get("re_password")
+        f_name = request.form.get("f_name")
+        l_name = request.form.get("l_name")
+        gender = request.form.get("acc_type")
+
+
+
+    else:
+        return render_template("register.html")
+
 
 @app.route("/")
 def index():
-    return render_template("register.html")
+    return render_template("login.html")
 
 
 if __name__ == '___main__':
