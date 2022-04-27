@@ -10,17 +10,30 @@
     }
     #ABC
     {
-        border : 1px solid red;
+      border: 3px solid #73AD21;
+      top: 30%;
     }
 }
 </style>
 <script type="text/javascript">
+
     window.onload = addFields;
    function changeFunc() {
     var selectBox = document.getElementById("options_no");
     var selectedValue = selectBox.options[selectBox.selectedIndex].value;
     alert(selectedValue);
    }
+   $(function() {
+    $('input[name="poll_range"]').daterangepicker({
+    opens: 'left',
+    "maxSpan": {
+                "days": 7
+            },
+    "minDate": moment()
+        }, function(start, end, label) {
+            console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+        });
+    });
    function addFields(){
             // Generate a dynamic number of inputs
             var number = document.getElementById("options_no").value;
@@ -50,11 +63,22 @@
                 container.appendChild(outer_div);
             }
         }
+    function addFilters(){
+            // Generate a dynamic number of inputs
+            var number = document.getElementById("poll_type").value;
+            // Get the element where the inputs will be added to
+            var container = document.getElementById("filter-container");
+            if(number == 1)
+                container.style = "display: none";
+            else
+                container.style = "display: block"
+    }
   </script>
 	<h5 style="position:absolute; margin-left: auto; margin-right: auto; left: 0; right: 0; text-align: center; TOP:150px;">Create Your Poll</h5> <br><br>
-    <section style=" position:absolute; TOP:200px; LEFT:100px; WIDTH:500px; HEIGHT:500px ">
+    <form action="/" method="POST">
+        <section style=" position:absolute; TOP:200px; LEFT:100px; WIDTH:500px;" id = "ABC">
 
-        <form action="/" method="POST">
+
 
             <! Poll Name -->
             <div class="form-group row">
@@ -89,11 +113,105 @@
             </div>
             <! option fields generated using js-->
                 <div id = "container"></div>
+        </section>
 
-            <button style="position:relative; TOP:30px; LEFT:200px;" type="submit" class="btn btn-primary">Register</button>
+        <section style=" position:absolute; TOP:200px; Right:100px; WIDTH:500px;" id = "ABC">
 
-        </form>
-    </section>
-    <section style=" position:absolute; TOP:200px; Right:100px; WIDTH:500px; HEIGHT:500px " id = "ABC">
-    </section>
+
+            <! Poll Type Public / Private -->
+            <div class="form-group row">
+                <div class="form-group col-md-3">
+                    <label for="poll_type">Poll Type</label>
+                    <select id="poll_type" class="form-control" name="poll_type" onchange="addFilters();">
+                        <option value="1">Public</option>
+                        <option value="2">Private</option>
+                    </select>
+                </div>
+            </div>
+<!--            Start and End Date of Poll-->
+            <div class="form-group row">
+                <div class="form-group col-md-6">
+                    <label for="poll_range">Poll Starting and Ending Date</label>
+                    <input type="text" name="poll_range" class="form-control" id="poll_range"  value="01/01/2018 - 01/15/2018" />
+                </div>
+            </div>
+<!--            Hidden Fields/ Visible when Poll Type is Private-->
+            <div id = "filter-container" style="display: none">
+                <!--            Gender Filter-->
+                <div class="form-group column" style="position:relative; TOP:7px;">
+                    <div class="form-group col-md-10">
+                        <label for="radio"> Gender </label>
+                        <div id = "radio">
+                            <input type="radio" id="all" name="gender" value="all"  style="position:relative; LEFT:25px;">
+                            <label for="all"  style="position:relative; LEFT:27px;" >All</label>
+                            <input type="radio" id="male" name="gender" value="Male"  style="position:relative; LEFT:52px;">
+                            <label for="male"  style="position:relative; LEFT:54px;" >Male</label>
+                            <input type="radio" id="female" name="gender" value="Female" style="position:relative; LEFT:79px;">
+                            <label for="female" style="position:relative; LEFT:81px;">Female</label>
+                            <input type="radio" id="other" name="gender" value="Other" style="position:relative; LEFT:106px;">
+                            <label for="other" style="position:relative; LEFT:108px;">Others</label>
+                            <br>
+                        </div>
+                    </div>
+                </div>
+<!--                Age Filter-->
+                <div class="form-group column" style="position:relative; TOP:9px;">
+                    <div class="form-group col-md-10">
+                        <label for="radio2"> Age Group </label>
+                            <div id = "radio2">
+                                <input type="radio" name="age" value="all" style="position:relative; LEFT:25px;">
+                                <label for="male"  style="position:relative; LEFT:27px;" >Everyone</label>
+                                <input type="radio" name="age" value="18+" style="position:relative; LEFT:52px;">
+                                <label for="female" style="position:relative; LEFT:54px;">18+ Only</label>
+                            </div>
+                    </div>
+                </div>
+                <div class="form-group row" style="position:relative; TOP:9px;">
+                    <div class="form-group col-md-6">
+                        <label for="inputState">State</label>
+                        <select id="inputState" class="form-control" name="state">
+                            <option value="all">Any</option>
+                            <option value="Andhra Pradesh">Andhra Pradesh</option>
+                            <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                            <option value="Assam">Assam</option>
+                            <option value="Bihar">Bihar</option>
+                            <option value="Chandigarh">Chandigarh</option>
+                            <option value="Chhattisgarh">Chhattisgarh</option>
+                            <option value="Dadar and Nagar Haveli">Dadar and Nagar Haveli</option>
+                            <option value="Daman and Diu">Daman and Diu</option>
+                            <option value="Delhi">Delhi</option>
+                            <option value="Lakshadweep">Lakshadweep</option>
+                            <option value="Puducherry">Puducherry</option>
+                            <option value="Goa">Goa</option>
+                            <option value="Gujarat">Gujarat</option>
+                            <option value="Haryana">Haryana</option>
+                            <option value="Himachal Pradesh">Himachal Pradesh</option>
+                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                            <option value="Jharkhand">Jharkhand</option>
+                            <option value="Karnataka">Karnataka</option>
+                            <option value="Kerala">Kerala</option>
+                            <option value="Madhya Pradesh">Madhya Pradesh</option>
+                            <option value="Maharashtra">Maharashtra</option>
+                            <option value="Manipur">Manipur</option>
+                            <option value="Meghalaya">Meghalaya</option>
+                            <option value="Mizoram">Mizoram</option>
+                            <option value="Nagaland">Nagaland</option>
+                            <option value="Odisha">Odisha</option>
+                            <option value="Punjab">Punjab</option>
+                            <option value="Rajasthan">Rajasthan</option>
+                            <option value="Sikkim">Sikkim</option>
+                            <option value="Tamil Nadu">Tamil Nadu</option>
+                            <option value="Telangana">Telangana</option>
+                            <option value="Tripura">Tripura</option>
+                            <option value="Uttar Pradesh">Uttar Pradesh</option>
+                            <option value="Uttarakhand">Uttarakhand</option>
+                            <option value="West Bengal">West Bengal</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button style="position:relative; TOP:50px; LEFT:200px;" type="submit" class="btn btn-primary" >Register</button>
+        </section>
+    </form>
 {% endblock %}
