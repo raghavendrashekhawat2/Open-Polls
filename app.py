@@ -36,7 +36,7 @@ def login_required(f):
 
 @app.route("/")
 def index():
-    return render_template("welcome.html")
+    return render_template("create-polls.html")
 
 
 # Function for /register route
@@ -116,6 +116,9 @@ def register():
 def login():
     conn = sqlite3.connect('Voting_database.db')
     c = conn.cursor()
+    # if you are already logged in you cant access the login page
+    if session.get("user_id"):
+        return render_template("home.html")
 
     if request.method == "POST":
         username = request.form.get("username")
