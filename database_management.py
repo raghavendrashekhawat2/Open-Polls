@@ -2,11 +2,9 @@ import sqlite3
 conn = sqlite3.connect('Voting_database.db')
 c = conn.cursor()
 
-uname = 'Champ'
-c.execute("SELECT userid from login_creds WHERE username = :p", {"p": uname})
-poll_id = c.fetchone()
-# table_name = "poll_no" + poll_id[0]
-print(poll_id[0])
+c.execute("""SELECT * FROM login_creds """)
+abc = c.fetchall()
+print(abc)
 
 # table_name = 'custom'
 
