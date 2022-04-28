@@ -41,7 +41,11 @@ pollid      public      private     no_of_options       age     gender      stat
 
 
 
+Table5(dynamic table) -> poll_res + poll_id
+
+sno     poll_access         Option Chosen
 
 
 
 
+ create tablename
