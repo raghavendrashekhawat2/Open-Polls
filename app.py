@@ -1,4 +1,6 @@
 import sqlite3
+from datetime import datetime
+
 from flask import Flask, flash, redirect, render_template, request, session, jsonify
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -36,7 +38,7 @@ def login_required(f):
 
 @app.route("/")
 def index():
-    return render_template("create-polls.html")
+    return render_template("welcome.html")
 
 
 # Function for /register route
@@ -125,6 +127,7 @@ def login():
         password = request.form.get("pswd")
         # opt = request.form.get("otp")
         print(password)
+        # Check if user exists
         if not (username and password):
             error_message = "Enter username and password"
             print(error_message)
@@ -132,13 +135,14 @@ def login():
 
         c.execute("SELECT * FROM login_creds WHERE username = :u ", {"u": username})
         rows = c.fetchone()
-        # print(generate_password_hash(password))
 
+        # Check if passwords match
         if not check_password_hash(rows[2], password):
             error_message = "Invalid username and password"
             print(error_message)
             return render_template("apology.html", message=error_message)
 
+        # Start Session
         session["user_id"] = rows[0]
         return render_template("home.html")
 
@@ -152,102 +156,112 @@ def logout():
     session.clear()
     return redirect("/")
 
-@app.route("/create_polls", methods=['POST'])
+
+@app.route("/create_polls", methods=["GET", "POST"])
+@login_required
 def create_polls():
-    pname = request.form.get("poll_name")
-    ques = request.form.get("question")
-    options_count = int(request.form.get("options_numbers"))
-    poll_type = request.form.get("poll_type")
-    poll_range = request.form.get("poll_range")
-    gender = request.form.get("gender")
-    age = request.form.get("age")
-    state = request.form.get("state")
 
-    options = []
-    for i in range(8):
-        j = (i + 1)
-        index = "option"+str(j)
-        single_option = request.form.get(index)
-        options.append(single_option)
-    for option in options:
-        if not option:
-            print("null here")
-        else :
-            print(option)
+    if request.method == "POST":
+        pname = request.form.get("poll_name")
+        ques = request.form.get("question")
+        options_count = int(request.form.get("options_numbers"))
+        poll_type = request.form.get("poll_type")
+        poll_range = request.form.get("poll_range")
+        gender = request.form.get("gender")
+        age = request.form.get("age")
+        state = request.form.get("state")
 
+        options = []
+        for i in range(8):
+            j = (i + 1)
+            idx = "option"+str(j)
+            single_option = request.form.get(idx)
+            options.append(single_option)
+        for option in options:
+            if not option:
+                print("null here")
+            else:
+                print(option)
 
-    # Check if all the fields are filled
-    if not (pname and ques and options_count and poll_type and poll_range):
-        error_message = "All the fields in the form must be filled 1"
-        print(error_message)
-        return render_template("apology.html", message=error_message)
-    for i in range(options_count):
-        if not options[i]:
-            error_message = "All the fields in the form must be filled 2"
+        # Check if all the fields are filled
+        if not (pname and ques and options_count and poll_type and poll_range):
+            error_message = "All the fields in the form must be filled 1"
             print(error_message)
             return render_template("apology.html", message=error_message)
+        for i in range(options_count):
+            if not options[i]:
+                error_message = "All the fields in the form must be filled 2"
+                print(error_message)
+                return render_template("apology.html", message=error_message)
 
-        # form date format -> mm/dd/yyyy
-        start_date = (poll_range[0:11]).strip()
-        expiry_date = (poll_range[13:]).strip()
+            # form date format -> mm/dd/yyyy
+            start_date = (poll_range[0:11]).strip()
+            expiry_date = (poll_range[13:]).strip()
 
-        # sql date format -> yyyy/mm/dd
-        # converting to date from form format to sql date format
+            # sql date format -> yyyy/mm/dd
+            # converting to date from form format to sql date format
 
-        formatted_start_date = datetime.strptime(start_date, '%m/%d/%Y').strftime('%Y/%m/%d')
-        formatted_expiry_date = datetime.strptime(expiry_date, '%m/%d/%Y').strftime('%Y/%m/%d')
-        pname = pname.strip()
-        ques = ques.strip()
+            formatted_start_date = datetime.strptime(start_date, '%m/%d/%Y').strftime('%Y/%m/%d')
+            formatted_expiry_date = datetime.strptime(expiry_date, '%m/%d/%Y').strftime('%Y/%m/%d')
+            pname = pname.strip()
+            ques = ques.strip()
 
-        print(pname)
-        print(ques)
-        print(options_count)
-        print(poll_type)
-        print(start_date)
-        print(expiry_date)
-        print(formatted_start_date)
-        print(formatted_expiry_date)
-        print(gender)
-        print(age)
-        print(state)
+            # print(pname)
+            # print(ques)
+            # print(options_count)
+            # print(poll_type)
+            # print(start_date)
+            # print(expiry_date)
+            # print(formatted_start_date)
+            # print(formatted_expiry_date)
+            # print(gender)
+            # print(age)
+            # print(state)
 
-    public = 0
-    private = 0
-    if poll_type == '1':
-        age = 'all'
-        gender = 'all'
-        state = 'all'
-        public = 1
+        public = 0
+        private = 0
+        if poll_type == '1':
+            age = 'all'
+            gender = 'all'
+            state = 'all'
+            public = 1
+        else:
+            private = 1
+
+        age_filter = 0
+        if age == '18+':
+            age_filter = 1
+
+        conn = sqlite3.connect('Voting_database.db')
+        c = conn.cursor()
+        # # 420 to be changed to int(session["user_id"]) which is owner's user id
+        owner = int(session["user_id"])
+        zero = 0
+        c.execute("INSERT INTO poll_filters(start, end, public, private, no_of_options, age, gender, state)"
+                  " VALUES(:s, :e, :pu, :pr, :n, :a, :g, :st)",
+                  {"s": formatted_start_date, "e": formatted_expiry_date, "pu": public, "pr": private, "n": options_count, "a": age_filter,
+                   "g": gender, "st": state})
+        c.execute("INSERT INTO poll_data(owner, pollname, quest, op1, op2, op3, op4, op5, op6, op7, op8)"
+                  " VALUES(:o, :p, :q, :o1, :o2, :o3, :o4, :o5, :o6, :o7, :o8 )",
+                  {"o": owner, "p": pname, "q": ques, "o1": options[0], "o2": options[1], "o3": options[2], "o4": options[3], "o5": options[4], "o6": options[5], "o7": options[6], "o8": options[7]})
+        c.execute("INSERT INTO poll_results(op1, op2, op3, op4, op5, op6, op7, op8)"
+                  " VALUES(:o1, :o2, :o3, :o4, :o5, :o6, :o7, :o8 )",
+                  {"o1": zero, "o2": zero, "o3": zero, "o4": zero, "o5": zero, "o6": zero, "o7": zero, "o8": zero})
+        c.execute("SELECT pollid from poll_data WHERE pollname = :p", {"p": pname})
+        poll_id = c.fetchone()
+        table_name = "poll_no" + str(poll_id[0])
+        query = """CREATE TABLE {}( userid INTEGER PRIMARY KEY, Option INTEGER ) """.format(table_name)
+        c.execute(query)
+        conn.commit()
+        return redirect("/home")
     else:
-        private = 1
+        return render_template("create_polls.html")
 
-    age_filter = 0
-    if age == '18+':
-        age_filter = 1
 
-    conn = sqlite3.connect('Voting_database.db')
-    c = conn.cursor()
-    # # 420 to be changed to int(session["user_id"]) which is owner's user id
-    owner = 420
-    zero = 0
-    c.execute("INSERT INTO poll_filters(start, end, public, private, no_of_options, age, gender, state)"
-              " VALUES(:s, :e, :pu, :pr, :n, :a, :g, :st)",
-              {"s": formatted_start_date, "e": formatted_expiry_date, "pu": public, "pr": private, "n": options_count, "a": age_filter,
-               "g": gender, "st": state})
-    c.execute("INSERT INTO poll_data(owner, pollname, quest, op1, op2, op3, op4, op5, op6, op7, op8)"
-              " VALUES(:o, :p, :q, :o1, :o2, :o3, :o4, :o5, :o6, :o7, :o8 )",
-              {"o": owner, "p": pname, "q": ques, "o1": options[0], "o2": options[1], "o3": options[2], "o4": options[3], "o5": options[4], "o6": options[5], "o7": options[6], "o8": options[7]})
-    c.execute("INSERT INTO poll_results(op1, op2, op3, op4, op5, op6, op7, op8)"
-              " VALUES(:o1, :o2, :o3, :o4, :o5, :o6, :o7, :o8 )",
-              {"o1": zero, "o2": zero, "o3": zero, "o4": zero, "o5": zero, "o6": zero, "o7": zero, "o8": zero})
-    c.execute("SELECT poll_id from poll_data WHERE pollname = :p", {"p": pname})
-    poll_id = c.fetchone()
-    table_name = "poll_no" + poll_id[0]
-    query = """CREATE TABLE {}( userid INTEGER PRIMARY KEY, Option INTEGER ) """.format(table_name)
-    c.execute(query)
-    conn.commit()
-    return redirect("/")
-
+@app.route("/home", methods=["GET"])
+@login_required
+def home():
+    return render_template("home.html")
 
 
 if __name__ == '___main__':
