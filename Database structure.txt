@@ -29,23 +29,66 @@ c.execute("""CREATE TABLE user_data (
                 ) """)
 
 
-Tabel3 name -> create_polls
+Table3 name -> poll_data
 
 pollid      Poll_Owner      Poll_Name       Question        op1     op2     op3     op4     op5     op6     op7     op8
              //userid
 
+//atleast first 2 options would never be null
+
+c.execute("""CREATE TABLE poll_data (
+                pollid INTEGER PRIMARY KEY AUTOINCREMENT,
+                owner INTEGER NOT NULL,
+                pollname VARCHAR(30) NOT NULL,
+                quest VARCHAR(300) NOT NULL,
+                op1 VARCHAR(50) NOT NULL,
+                op2 VARCHAR(50) NOT NULL,
+                op3 VARCHAR(50),
+                op4 VARCHAR(50),
+                op5 VARCHAR(50),
+                op6 VARCHAR(50),
+                op7 VARCHAR(50),
+                op8 VARCHAR(50)
+                ) """)
+
 
 Table4 name -> poll_filters
 
-pollid      public      private     no_of_options       age     gender      state
+pollid    starting_date    expiry_date     public     private    no_of_options      age    gender    state
+
+c.execute("""CREATE TABLE poll_filters (
+                pollid INTEGER PRIMARY KEY AUTOINCREMENT,
+                start DATE NOT NULL,
+                end DATE NOT NULL,
+                public INTEGER,
+                private INTEGER,
+                no_of_options INTEGER,
+                age INTEGER,
+                gender VARCHAR(50),
+                state VARCHAR(50)
+                ) """)
+
+table5 name -> poll_results(update)
+
+c.execute("""CREATE TABLE poll_results (
+                pollid INTEGER PRIMARY KEY AUTOINCREMENT,
+                op1 INTEGER,
+                op2 INTEGER,
+                op3 INTEGER,
+                op4 INTEGER,
+                op5 INTEGER,
+                op6 INTEGER,
+                op7 INTEGER,
+                op8 INTEGER
+                ) """)
+
+pollid op1 op2 ... op8
+3       1   1  ... 0
+
+table6 -> poll_id(dynamic)
+
+user_id(Integer) Option
+  3               0-8            0-> not voted
+  4               0-8
 
 
-
-Table5(dynamic table) -> poll_res + poll_id
-
-sno     poll_access         Option Chosen
-
-
-
-
- create tablename
