@@ -36,7 +36,7 @@ def login_required(f):
 
 @app.route("/")
 def index():
-    return render_template("create-polls.html")
+    return render_template("welcome.html")
 
 
 # Function for /register route
@@ -151,6 +151,19 @@ def login():
 def logout():
     session.clear()
     return redirect("/")
+
+
+@app.route("/create_polls", methods=["GET", "POST"])
+@login_required
+def create_polls():
+
+    return render_template("create_polls.html")
+
+
+@app.route("/home", methods=["GET", "POST"])
+@login_required
+def home():
+    return render_template("home.html")
 
 
 if __name__ == '___main__':
