@@ -2,16 +2,20 @@ import sqlite3
 conn = sqlite3.connect('Voting_database.db')
 c = conn.cursor()
 
-c.execute("""SELECT * FROM login_creds """)
-abc = c.fetchall()
-print(abc)
 
-# table_name = 'custom'
+table_name = "poll_no" + str(2)
+query = """select * from {}""".format(table_name)
+c.execute(query)
+row = c.fetchall()
+print(row)
+# # table_name = 'custom'
+# valid_mails = ["raghavendrashekhawat1@gmail.com", "raghavendrashekhawat2@gmail.com", "raghavendrashekhawat3@gmail.com"]
+#
+# for mail in valid_mails:
+#     print(mail)
+#     query = """ INSERT INTO {}(emailid, option) VAlUES(:m, :o) """.format(table_name)
+#     c.execute(query, {"m": mail, "o": 0})
 
-# query = """CREATE TABLE {}( userid INTEGER PRIMARY KEY, Option INTEGER ) """.format(table_name)
-# print(query)
-
-# c.execute(query)
 
 # c.execute("""CREATE TABLE login_creds (
 #                 userid INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -67,7 +71,3 @@ print(abc)
 #                 op8 INTEGER
 #                 ) """)
 conn.commit()
-rows = c.fetchall()
-
-for row in rows:
-    print(row)

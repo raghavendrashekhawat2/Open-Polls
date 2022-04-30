@@ -31,7 +31,7 @@ c.execute("""CREATE TABLE user_data (
 
 Table3 name -> poll_data
 
-pollid      Poll_Owner      Poll_Name       Question        op1     op2     op3     op4     op5     op6     op7     op8
+pollid      owner      pollname       ques        op1     op2     op3     op4     op5     op6     op7     op8
              //userid
 
 //atleast first 2 options would never be null
@@ -54,7 +54,7 @@ c.execute("""CREATE TABLE poll_data (
 
 Table4 name -> poll_filters
 
-pollid    starting_date    expiry_date     public     private    no_of_options      age    gender    state
+pollid    start    end     public     private    no_of_options      age    gender    state
 
 c.execute("""CREATE TABLE poll_filters (
                 pollid INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -90,12 +90,12 @@ c.execute("""CREATE TABLE poll_results (
 
 table6 -> "poll_no" + poll_id
 
-user_id          Option
+email_id          Option
   3               0-8            0-> not voted
   4               0-8
 
 table_name = "poll_no" + str(poll_id[0])
-query = """CREATE TABLE {}( userid INTEGER PRIMARY KEY, Option INTEGER ) """.format(table_name)
+query = """CREATE TABLE {}( emailid INTEGER PRIMARY KEY, Option INTEGER ) """.format(table_name)
 c.execute(query)
 
 
