@@ -1,11 +1,14 @@
+import datetime
+import re
 import sqlite3
-from datetime import datetime
 
 from flask import Flask, flash, redirect, render_template, request, session, jsonify
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from tempfile import mkdtemp
 from functools import wraps
+
+from helper import convert_date, compare_date
 
 app = Flask(__name__)
 
@@ -120,7 +123,7 @@ def login():
     c = conn.cursor()
     # if you are already logged in you cant access the login page
     if session.get("user_id"):
-        return render_template("home.html")
+        return redirect("/home")
 
     if request.method == "POST":
         username = request.form.get("username")
@@ -144,7 +147,7 @@ def login():
 
         # Start Session
         session["user_id"] = rows[0]
-        return render_template("home.html")
+        return redirect("/home")
 
     else:
         return render_template("login.html")
@@ -160,6 +163,9 @@ def logout():
 @app.route("/create_polls", methods=["GET", "POST"])
 @login_required
 def create_polls():
+    # Connect to the database
+    conn = sqlite3.connect('Voting_database.db')
+    c = conn.cursor()
 
     if request.method == "POST":
         pname = request.form.get("poll_name")
@@ -170,6 +176,7 @@ def create_polls():
         gender = request.form.get("gender")
         age = request.form.get("age")
         state = request.form.get("state")
+        email = request.form.get("email_list")
 
         options = []
         for i in range(8):
@@ -177,11 +184,20 @@ def create_polls():
             idx = "option"+str(j)
             single_option = request.form.get(idx)
             options.append(single_option)
-        for option in options:
-            if not option:
-                print("null here")
+
+        # Check if emails are valid
+        e_list = email.split("\r\n")
+        valid_mails = []
+        invalid_mails = []
+        email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+        for mail in e_list:
+            if re.fullmatch(email_pattern, mail):
+                valid_mails.append(mail)
             else:
-                print(option)
+                invalid_mails.append(mail)
+
+        # Delete extra list
+        del e_list
 
         # Check if all the fields are filled
         if not (pname and ques and options_count and poll_type and poll_range):
@@ -206,18 +222,6 @@ def create_polls():
             pname = pname.strip()
             ques = ques.strip()
 
-            # print(pname)
-            # print(ques)
-            # print(options_count)
-            # print(poll_type)
-            # print(start_date)
-            # print(expiry_date)
-            # print(formatted_start_date)
-            # print(formatted_expiry_date)
-            # print(gender)
-            # print(age)
-            # print(state)
-
         public = 0
         private = 0
         if poll_type == '1':
@@ -232,18 +236,17 @@ def create_polls():
         if age == '18+':
             age_filter = 1
 
-        conn = sqlite3.connect('Voting_database.db')
-        c = conn.cursor()
-        # # 420 to be changed to int(session["user_id"]) which is owner's user id
+        # Insert data into the database
         owner = int(session["user_id"])
         zero = 0
         c.execute("INSERT INTO poll_filters(start, end, public, private, no_of_options, age, gender, state)"
                   " VALUES(:s, :e, :pu, :pr, :n, :a, :g, :st)",
-                  {"s": formatted_start_date, "e": formatted_expiry_date, "pu": public, "pr": private, "n": options_count, "a": age_filter,
-                   "g": gender, "st": state})
+                  {"s": formatted_start_date, "e": formatted_expiry_date, "pu": public, "pr": private,
+                   "n": options_count, "a": age_filter, "g": gender, "st": state})
         c.execute("INSERT INTO poll_data(owner, pollname, quest, op1, op2, op3, op4, op5, op6, op7, op8)"
                   " VALUES(:o, :p, :q, :o1, :o2, :o3, :o4, :o5, :o6, :o7, :o8 )",
-                  {"o": owner, "p": pname, "q": ques, "o1": options[0], "o2": options[1], "o3": options[2], "o4": options[3], "o5": options[4], "o6": options[5], "o7": options[6], "o8": options[7]})
+                  {"o": owner, "p": pname, "q": ques, "o1": options[0], "o2": options[1], "o3": options[2],
+                   "o4": options[3], "o5": options[4], "o6": options[5], "o7": options[6], "o8": options[7]})
         c.execute("INSERT INTO poll_results(op1, op2, op3, op4, op5, op6, op7, op8)"
                   " VALUES(:o1, :o2, :o3, :o4, :o5, :o6, :o7, :o8 )",
                   {"o1": zero, "o2": zero, "o3": zero, "o4": zero, "o5": zero, "o6": zero, "o7": zero, "o8": zero})
@@ -253,6 +256,15 @@ def create_polls():
         query = """CREATE TABLE {}( userid INTEGER PRIMARY KEY, Option INTEGER ) """.format(table_name)
         c.execute(query)
         conn.commit()
+        conn.close()
+
+        # Only valid mails added invalid mails not added. Flash message on home page later that these mails
+        # have not been added
+
+        for mail in valid_mails:
+            query = """ INSERT INTO {}(emailid, option) VAlUES(:m, :o) """.format(table_name)
+            c.execute(query, {"m": mail, "o": 0})
+
         return redirect("/home")
     else:
         return render_template("create_polls.html")
@@ -262,6 +274,55 @@ def create_polls():
 @login_required
 def home():
     return render_template("home.html")
+
+
+@app.route("/view_public_polls", methods=["GET", "POST"])
+@login_required
+def view_public_polls():
+    # Connect to the database
+    conn = sqlite3.connect('Voting_database.db')
+    c = conn.cursor()
+    if request.method == "POST":
+        val_0 = request.form.get("part")
+        val_1 = request.form.get("res")
+        if val_0:
+            return render_template("participate.html")
+        else:
+            return render_template("result.html")
+    else:
+        # Get the data to be displayed from the database
+
+        c.execute("""SELECT pollid from poll_data""")
+        poll_id = c.fetchall()
+        c.execute("""SELECT pollname from poll_data""")
+        poll_name = c.fetchall()
+        c.execute("""SELECT start, end from poll_filters""")
+        poll_dates = c.fetchall()
+        curr_date = datetime.date.today()
+        final_data = []
+
+
+        for i in range(len(poll_dates)):
+            data = [poll_id[i][0], poll_name[i][0], convert_date(poll_dates[i][0]), convert_date(poll_dates[i][1])]
+            # Convert Starting data from yyyy/mm/dd to 4 April
+            if not compare_date(poll_dates[i][0]):
+                data.append(0)
+            else:
+                # Convert Ending data from yyyy/mm/dd to 4 April
+                data.append(1)
+            final_data.append(data)
+
+        print(final_data)
+
+
+        # voted = []
+        # for id in poll_id:
+        #     table_name = "poll_no" + id
+        #     query = """SELECT option from TABLE {}""".format(table_name)
+        #     query += " WHERE "
+        #     c.execute("""  """)
+        print("This is the poll_name", poll_id)
+        return render_template("public_polls.html", data=final_data, n=len(final_data))
 
 
 if __name__ == '___main__':

@@ -75,8 +75,8 @@
     }
    </script>
    <h4 style="position:absolute; margin-left: auto; margin-right: auto; left: 0; right: 0; text-align: center; TOP:150px;">Create Your Poll</h4> <br><br>
-        <form action="/create_polls" method="POST">
-            <section style=" position:absolute; TOP:250px; LEFT:250px; WIDTH:500px; BOTTOM : 10px;" id = "ABC">
+        <form action="/create_polls" method="POST" style="width: 80%; align:center;">
+            <section style=" position:absolute; TOP:250px; LEFT:250px; WIDTH:30%;BOTTOM : 10px;" id = "ABC">
                 <h5>Poll Details</h5><br>
                 <! Poll Name -->
                 <div class="form-group row">
@@ -114,7 +114,7 @@
                     <div id = "container"></div>
             </section>
 
-            <section style=" position:absolute; TOP:250px; Right:150px; WIDTH:500px;" id = "ABC">
+            <section style=" position:absolute; TOP:250px; Right:150px; WIDTH:30%;">
                 <h5>Apply Filters</h5> <br>
                 <! Poll Type Public / Private -->
                 <div class="form-group row">
@@ -210,6 +210,13 @@
                             </select>
                         </div>
                     </div>
+                    <h5>Invite Participants </h5> <br>
+                    <div class="form-group row">
+                        <div class="form-group col-md-6" style="text">
+                            <label for="elist">Enter one email id in each line</label>
+                            <textarea placeholder="raghavendra@gmail.com&#10;wm@gmail.com&#10;mai_inti_sundar_hu@gmail.com" name="email_list" id = "elist" rows="4" cols="38"></textarea>
+                    </div>
+                </div>
                 </div>
                 <button style="position:relative; TOP:50px; LEFT:130px;" type="submit" class="btn btn-primary" >Create Poll</button>
             </section>

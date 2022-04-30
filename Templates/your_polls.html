@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block title %}
+    <title> Register </title>
+{% endblock %}
+
+
+{% block main %}
+    <h3 style="position: absolute; top: 200px; left:700px;">List of all  Public Polls</h3>
+    <main>
+        <table style="width: 80%; align: center; position: absolute; top: 250px;">
+            <tr>
+                <th>S No</th>
+                <th>Poll Name</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+
+            </tr>
+            {% for i in range(n) %}
+                <tr>
+                    <td> {{ i }} </td>
+                    <td> {{ names[i][0] }} </td>
+                    <td> {{ dates[i][0] }} </td>
+                    <td> {{ dates[i][1] }} </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </main>
+
+{% endblock %}

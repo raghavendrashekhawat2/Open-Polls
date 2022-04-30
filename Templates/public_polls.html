@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+{% block title %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel="stylesheet" href="static/view_polls/style.css">
+    <title>
+        Public Poll
+    </title>
+
+{% endblock %}
+
+{% block main %}
+<section style = "display: block;
+    background-color: #5BB9B8;
+    height:150px;
+
+    padding:65px;
+    font-size: 2em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    text-align: center;">
+
+    Public Polls
+</section>
+    <form action = "/view_public_polls" method="POST">
+        <main>
+            <table>
+                <thead>
+                    <tr>
+                        <th> S No </th>
+                        <th> Poll Name</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Participate Now</th>
+                        <th>Check Result</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th colspan='5'>
+                          Year: 2022
+                        </th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    {% for i in range(n) %}
+                    <tr>
+                        <td> {{ i+1 }} </td>
+                        <td> {{ data[i][1] }} </td>
+                        <td> {{ data[i][2] }} </td>
+                        <td> {{ data[i][3] }} </td>
+                        <td class='select'>
+                            {% if data[i][4] == 1 %}
+                                <button value='{{ data[i][0] }}' name="part" type="submit" class="button">Participate now</button>
+                            {% else %}
+                                Closed
+                            {% endif %}
+                        </td>
+                        <td class='select'>
+                            <button value='{{ data[i][0] }}' name="part" type="submit" class="button">Check Result</button>
+                        </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+        </main>
+    </form>
+{% endblock %}
