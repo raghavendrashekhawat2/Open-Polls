@@ -21,7 +21,7 @@
 
     Public Polls
 </section>
-    <form action = "/">
+    <form action = "/view_public_polls" method="POST">
         <main>
             <table>
                 <thead>
@@ -44,16 +44,19 @@
                 <tbody>
                     {% for i in range(n) %}
                     <tr>
-
                         <td> {{ i+1 }} </td>
-                        <td> {{ names[i][0] }} </td>
-                        <td> {{ dates[i][0] }} </td>
-                        <td> {{ dates[i][1] }} </td>
+                        <td> {{ data[i][1] }} </td>
+                        <td> {{ data[i][2] }} </td>
+                        <td> {{ data[i][3] }} </td>
                         <td class='select'>
-                            <button value="{{ pollid[i] }}" type="submit" class="button">Participate now</button>
+                            {% if data[i][4] == 1 %}
+                                <button value='{{ data[i][0] }}' name="part" type="submit" class="button">Participate now</button>
+                            {% else %}
+                                Closed
+                            {% endif %}
                         </td>
                         <td class='select'>
-                            <button value="{{ pollid[i] }}" type="submit" class="button">Click here</button>
+                            <button value='{{ data[i][0] }}' name="part" type="submit" class="button">Check Result</button>
                         </td>
                     </tr>
                   {% endfor %}

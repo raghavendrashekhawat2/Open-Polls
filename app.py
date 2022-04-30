@@ -1,12 +1,14 @@
+import datetime
 import re
 import sqlite3
-from datetime import datetime
 
 from flask import Flask, flash, redirect, render_template, request, session, jsonify
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from tempfile import mkdtemp
 from functools import wraps
+
+from helper import convert_date, compare_date
 
 app = Flask(__name__)
 
@@ -239,11 +241,12 @@ def create_polls():
         zero = 0
         c.execute("INSERT INTO poll_filters(start, end, public, private, no_of_options, age, gender, state)"
                   " VALUES(:s, :e, :pu, :pr, :n, :a, :g, :st)",
-                  {"s": formatted_start_date, "e": formatted_expiry_date, "pu": public, "pr": private, "n": options_count, "a": age_filter,
-                   "g": gender, "st": state})
+                  {"s": formatted_start_date, "e": formatted_expiry_date, "pu": public, "pr": private,
+                   "n": options_count, "a": age_filter, "g": gender, "st": state})
         c.execute("INSERT INTO poll_data(owner, pollname, quest, op1, op2, op3, op4, op5, op6, op7, op8)"
                   " VALUES(:o, :p, :q, :o1, :o2, :o3, :o4, :o5, :o6, :o7, :o8 )",
-                  {"o": owner, "p": pname, "q": ques, "o1": options[0], "o2": options[1], "o3": options[2], "o4": options[3], "o5": options[4], "o6": options[5], "o7": options[6], "o8": options[7]})
+                  {"o": owner, "p": pname, "q": ques, "o1": options[0], "o2": options[1], "o3": options[2],
+                   "o4": options[3], "o5": options[4], "o6": options[5], "o7": options[6], "o8": options[7]})
         c.execute("INSERT INTO poll_results(op1, op2, op3, op4, op5, op6, op7, op8)"
                   " VALUES(:o1, :o2, :o3, :o4, :o5, :o6, :o7, :o8 )",
                   {"o1": zero, "o2": zero, "o3": zero, "o4": zero, "o5": zero, "o6": zero, "o7": zero, "o8": zero})
@@ -280,16 +283,37 @@ def view_public_polls():
     conn = sqlite3.connect('Voting_database.db')
     c = conn.cursor()
     if request.method == "POST":
-        print("hi")
-
+        val_0 = request.form.get("part")
+        val_1 = request.form.get("res")
+        if val_0:
+            return render_template("participate.html")
+        else:
+            return render_template("result.html")
     else:
-        # poll name, start date, end data and status button
+        # Get the data to be displayed from the database
+
         c.execute("""SELECT pollid from poll_data""")
-        poll_id = c.fetchone()
+        poll_id = c.fetchall()
         c.execute("""SELECT pollname from poll_data""")
         poll_name = c.fetchall()
         c.execute("""SELECT start, end from poll_filters""")
         poll_dates = c.fetchall()
+        curr_date = datetime.date.today()
+        final_data = []
+
+
+        for i in range(len(poll_dates)):
+            data = [poll_id[i][0], poll_name[i][0], convert_date(poll_dates[i][0]), convert_date(poll_dates[i][1])]
+            # Convert Starting data from yyyy/mm/dd to 4 April
+            if not compare_date(poll_dates[i][0]):
+                data.append(0)
+            else:
+                # Convert Ending data from yyyy/mm/dd to 4 April
+                data.append(1)
+            final_data.append(data)
+
+        print(final_data)
+
 
         # voted = []
         # for id in poll_id:
@@ -297,8 +321,8 @@ def view_public_polls():
         #     query = """SELECT option from TABLE {}""".format(table_name)
         #     query += " WHERE "
         #     c.execute("""  """)
-        print("This is the poll_name", poll_name)
-        return render_template("public_polls.html", pollid=poll_id, names=poll_name, dates=poll_dates, n=len(poll_name))
+        print("This is the poll_name", poll_id)
+        return render_template("public_polls.html", data=final_data, n=len(final_data))
 
 
 if __name__ == '___main__':
