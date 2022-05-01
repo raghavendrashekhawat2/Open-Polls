@@ -1,29 +1,68 @@
 {% extends "layout.html" %}
 {% block title %}
-    <title> Register </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel="stylesheet" href="static/view_polls/style.css">
+    <title>
+        Private Polls
+    </title>
+
 {% endblock %}
 
-
 {% block main %}
-    <h3 style="position: absolute; top: 200px; left:700px;">List of all  Public Polls</h3>
-    <main>
-        <table style="width: 80%; align: center; position: absolute; top: 250px;">
-            <tr>
-                <th>S No</th>
-                <th>Poll Name</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Status</th>
-            </tr>
-            {% for i in range(n) %}
-                <tr>
-                    <td> {{ i }} </td>
-                    <td> {{ names[i][0] }} </td>
-                    <td> {{ dates[i][0] }} </td>
-                    <td> {{ dates[i][1] }} </td>
-                </tr>
-            {% endfor %}
-        </table>
-    </main>
+<section style = "display: block;
+    background-color: #5BB9B8;
+    height:150px;
 
+    padding:65px;
+    font-size: 2em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    text-align: center;">
+
+    Private Polls
+</section>
+    <form action = "/view_public_polls" method="POST">
+        <main>
+            <table>
+                <thead>
+                    <tr>
+                        <th> S No </th>
+                        <th> Poll Name</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Your Answer</th>
+                        <th>Check Result</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th colspan='5'>
+                          Year: 2022
+                        </th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    {% for i in range(n) %}
+                    <tr>
+                        <td> {{ i+1 }} </td>
+                        <td> {{ data[i][1] }} </td>
+                        <td> {{ data[i][2] }} </td>
+                        <td> {{ data[i][3] }} </td>
+                        <td class='select'>
+                            {% if data[i][5] == 1 and data[i][4] == 0 %}
+                                <button value='{{ data[i][0] }}' name="part" type="submit" class="button">Participate now</button>
+                            {% else %}
+                                <td> {{ data[i][4] }} </td>
+                            {% endif %}
+                        </td>
+                        <td class='select'>
+                            <button value='{{ data[i][0] }}' name="part" type="submit" class="button">Check Result</button>
+                        </td>
+
+                    </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+        </main>
+    </form>
 {% endblock %}

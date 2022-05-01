@@ -276,7 +276,7 @@ def home():
     return render_template("home.html")
 
 
-@app.route("/view_public_polls", methods=["GET", "POST"])
+@app.route("/public_polls", methods=["GET", "POST"])
 @login_required
 def view_public_polls():
     # Connect to the database
@@ -290,18 +290,24 @@ def view_public_polls():
         else:
             return render_template("result.html")
     else:
+        # Can optimize this code. Its 3:24 AM and i am tooo lazyyyyyyyyyyyyyy rn
         # Get the data to be displayed from the database
 
-        c.execute("""SELECT pollid from poll_data""")
+        c.execute("""SELECT pollid from poll_filters WHERE public == 1""")
         poll_id = c.fetchall()
-        c.execute("""SELECT pollname from poll_data""")
-        poll_name = c.fetchall()
-        c.execute("""SELECT start, end from poll_filters""")
-        poll_dates = c.fetchall()
+        poll_name = []
+        poll_dates = []
+        for idx in poll_id:
+            c.execute("""SELECT pollname from poll_data WHERE pollid == :p""", {"p": idx[0]})
+            poll_name.append(c.fetchone())
+            c.execute("""SELECT start, end from poll_filters WHERE pollid == :p""", {"p": idx[0]})
+            poll_dates.append(c.fetchone())
+
         curr_date = datetime.date.today()
         final_data = []
 
-
+        # Organize data into a single list
+        # Check if poll has expired
         for i in range(len(poll_dates)):
             data = [poll_id[i][0], poll_name[i][0], convert_date(poll_dates[i][0]), convert_date(poll_dates[i][1])]
             # Convert Starting data from yyyy/mm/dd to 4 April
@@ -313,16 +319,77 @@ def view_public_polls():
             final_data.append(data)
 
         print(final_data)
-
-
+        # Delete extra lists
+        del poll_id
+        del poll_name
+        del poll_dates
         # voted = []
         # for id in poll_id:
         #     table_name = "poll_no" + id
         #     query = """SELECT option from TABLE {}""".format(table_name)
         #     query += " WHERE "
         #     c.execute("""  """)
-        print("This is the poll_name", poll_id)
+
         return render_template("public_polls.html", data=final_data, n=len(final_data))
+
+
+@app.route("/private_polls", methods=["GET", "POST"])
+@login_required
+def private_polls():
+    conn = sqlite3.connect('Voting_database.db')
+    c = conn.cursor()
+    if request.method == "POST":
+        val_0 = request.form.get("part")
+        val_1 = request.form.get("res")
+        if val_0:
+            return render_template("participate.html")
+        else:
+            return render_template("result.html")
+    else:
+        c.execute("""SELECT email from user_data WHERE userid = :u """, {"u": 2})
+        email = c.fetchone()[0]
+        c.execute("""SELECT pollid from poll_filters WHERE private == 1""")
+        poll_id = c.fetchall()
+
+        final_p = []
+        final_options = []
+        # Check if user has access to the poll if yes then add to final_p and final_options
+        for idx in poll_id:
+            table_name = "poll_no" + str(idx[0])
+            c.execute("""SELECT option from {} where emailid == :o """.format(table_name), {"o": email})
+            option = c.fetchone()
+            print(option)
+            if option is not None:
+                final_p.append(idx[0])
+                final_options.append(option[0])
+
+        poll_name = []
+        poll_dates = []
+
+        for idx in final_p:
+            c.execute("""SELECT pollname from poll_data WHERE pollid == :p""", {"p": idx})
+            poll_name.append(c.fetchone())
+            c.execute("""SELECT start, end from poll_filters WHERE pollid == :p""", {"p": idx})
+            poll_dates.append(c.fetchone())
+
+        curr_date = datetime.date.today()
+        final_data = []
+
+        # Organize data into a single list
+        # Check if poll has expired
+        for i in range(len(final_p)):
+            data = [final_p[i], poll_name[i][0], convert_date(poll_dates[i][0]), convert_date(poll_dates[i][1]),
+                    final_options[i]]
+            # Convert Starting data from yyyy/mm/dd to 4 April
+            if not compare_date(poll_dates[i][0]):
+                data.append(0)
+            else:
+                # Convert Ending data from yyyy/mm/dd to 4 April
+                data.append(1)
+            final_data.append(data)
+        # print(final_data)
+
+        return render_template("private_polls.html", data=final_data, n=len(final_data))
 
 
 if __name__ == '___main__':
