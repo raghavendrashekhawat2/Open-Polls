@@ -1,13 +1,76 @@
+import datetime
 import sqlite3
+from helper import convert_date, compare_date
+
 conn = sqlite3.connect('Voting_database.db')
 c = conn.cursor()
 
+# c.execute(""" INSERT INTO poll_no5(emailid, option) VALUES('raghavendrashekhawat1@gmail.com', 0)""")
 
-table_name = "poll_no" + str(2)
-query = """select * from {}""".format(table_name)
-c.execute(query)
-row = c.fetchall()
-print(row)
+
+c.execute("""SELECT email from user_data WHERE userid = :u """, {"u": 2})
+email = c.fetchone()[0]
+c.execute("""SELECT pollid from poll_filters WHERE private == 1""")
+poll_id = c.fetchall()
+print(poll_id, email)
+
+
+final_p = []
+final_options = []
+# Check if user has access to the poll if yes then add to final_p and final_options
+for idx in poll_id:
+    table_name = "poll_no" + str(idx[0])
+    c.execute("""SELECT option from {} where emailid == :o """.format(table_name), {"o": email})
+    option = c.fetchone()
+    if option is not None:
+        final_p.append(idx[0])
+        final_options.append(option[0])
+
+poll_name = []
+poll_dates = []
+
+for idx in final_p:
+    c.execute("""SELECT pollname from poll_data WHERE pollid == :p""", {"p": idx})
+    poll_name.append(c.fetchone())
+    c.execute("""SELECT start, end from poll_filters WHERE pollid == :p""", {"p": idx})
+    poll_dates.append(c.fetchone())
+
+final_data = []
+
+# Organize data into a single list
+# Check if poll has expired
+for i in range(len(final_p)):
+    data = [final_p[i], poll_name[i][0], convert_date(poll_dates[i][0]), convert_date(poll_dates[i][1]),
+            final_options[i]]
+    # Convert Starting data from yyyy/mm/dd to 4 April
+    if not compare_date(poll_dates[i][0]):
+        data.append(0)
+    else:
+        # Convert Ending data from yyyy/mm/dd to 4 April
+        data.append(1)
+    final_data.append(data)
+print(final_data)
+
+
+
+
+
+
+# c.execute(""" UPDATE "user_data" SET "userid"='2', "First_Name"='Raghavendra', "Last_Name"='Shekhawat', "Dob"='1999-12-04', "State"='Rajasthan', "Mob_Number"='9027592291', "Gender"='Male', "Email"='raghavendrashekhawat1@gmail.com' WHERE "rowid" = 2 """)
+
+#
+# table_name = "poll_no" + str(10)
+# query = """select * from {}""".format(table_name)
+#
+# email = "raghavendrashekhawat1@gmail.com"
+# idx = 2
+# table_name = "poll_no" + str(idx)
+# query = """SELECT option from poll_no2 where email == :o """
+#
+# c.execute("""SELECT option from {} where emailid == :o """.format(table_name), {"o": email})
+# row = c.fetchall()[0]
+# print(row)
+# print(query)
 # # table_name = 'custom'
 # valid_mails = ["raghavendrashekhawat1@gmail.com", "raghavendrashekhawat2@gmail.com", "raghavendrashekhawat3@gmail.com"]
 #
@@ -22,7 +85,7 @@ print(row)
 #                 username VARCHAR(30) NOT NULL,
 #                 password TEXT NOT NULL
 #                 ) """)
-# c.execute("""INSERT INTO login_creds (username, password) VALUES( 'Cham', 'hamp')""")
+# c.execute("""INSERT INTO user_data (username, password) VALUES( 'Cham', 'hamp')""")
 
 # c.execute("""delete from user_data where userid == 1""")
 

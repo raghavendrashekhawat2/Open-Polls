@@ -30,10 +30,13 @@
             Online Polling System
         </a>
         <div class = "to_right">
-            <a href="/login" >Login</a>
-            <a href="/register">Register</a>
-            <a href="#contact">Contact</a>
-            <a style="right : 200px position :" href="#about">About</a>
+            <script>console.log(session.user_id)</script>
+            {% if session.user_id %}
+                <a style="right : 200px position :" href="/logout" >Logout</a>
+            {% else %}
+                <a href="/login" >Login</a>
+                <a style="right : 200px position :" href="/register">Register</a>
+            {% endif %}
         </div>
         <a href="javascript:void(0);" class="icon" onclick="myFunction()">
             <i class="fa fa-bars"></i>
