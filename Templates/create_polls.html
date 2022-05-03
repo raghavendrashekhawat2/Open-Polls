@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block title %}
-	Create Polls
+<title>Create Polls</title>
 {% endblock %}
 
 {% block main %}
@@ -8,11 +8,13 @@
     .pname{
         resize : none;
     }
-<!--    #ABC-->
-<!--    {-->
-<!--      border: 3px solid #73AD21;-->
-<!--      top: 30%;-->
-<!--    }-->
+    .noline{
+        margin-bottom : 0 !important;
+    }
+    h4, #ABC
+    {
+          font-family: 'Poppins', sans-serif;
+    }
 }
 </style>
 <script type="text/javascript">
@@ -45,9 +47,9 @@
             }
             for (i = 1; i <= number; i++){
                 outer_div = document.createElement("div");
-                outer_div.className = "form-group row";
+                outer_div.className = "form-group noline row";
                 inner_div = document.createElement("div");
-                inner_div.className = "form-group col-md-8";
+                inner_div.className = "form-group noline col-md-8";
                 inner_div.style = "text";
                 label = document.createElement("label");
                 label.htmlFor = "option"+i;
@@ -76,28 +78,28 @@
    </script>
    <h4 style="position:absolute; margin-left: auto; margin-right: auto; left: 0; right: 0; text-align: center; TOP:150px;">Create Your Poll</h4> <br><br>
         <form action="/create_polls" method="POST" style="width: 80%; align:center;">
-            <section style=" position:absolute; TOP:250px; LEFT:250px; WIDTH:30%;BOTTOM : 10px;" id = "ABC">
+            <section style="position:absolute; TOP:250px; LEFT:250px; WIDTH:500px; BOTTOM:10px" id = "ABC">
                 <h5>Poll Details</h5><br>
                 <! Poll Name -->
-                <div class="form-group row">
-                    <div class="form-group col-md-8" style="text">
+                <div class="form-group noline row">
+                    <div class="form-group noline col-md-8" style="text">
                         <label for="p_name">Poll Name</label>
                         <input type="text" class="form-control" placeholder="Poll Name" name="poll_name" id = "p_name">
                     </div>
                 </div>
 
                 <! Enter Your Question -->
-                <div class="form-group row">
-                    <div class="form-group col-md-6" style="text">
+                <div class="form-group noline row">
+                    <div class="form-group noline col-md-6" style="text">
                         <label for="ques">Poll Question</label>
-                        <textarea placeholder="Enter your Question" name="question" id = "ques" rows="4" cols="38"></textarea>
+                        <textarea placeholder="Enter your Question" name="question" id = "ques" rows="5" cols="38"></textarea>
                     </div>
                 </div>
 
                 <! no of Options -->
                 <div class="form-horizontal">
-                    <div class="form-group">
-                        <label for="options_no" class="col-sm-6 control-label">Select number of options</label>
+                    <div class="form-group noline">
+                        <label for="options_no" class="col-md-6 control-label" style="padding-left : 0px !important">Select number of options</label>
                         <select id="options_no" class="form-horizontal" name="options_numbers" onchange="addFields();">
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -114,11 +116,11 @@
                     <div id = "container"></div>
             </section>
 
-            <section style=" position:absolute; TOP:250px; Right:150px; WIDTH:30%;">
+            <section style="position:absolute; TOP:250px; LEFT:1000px; WIDTH:500px;">
                 <h5>Apply Filters</h5> <br>
                 <! Poll Type Public / Private -->
-                <div class="form-group row">
-                    <div class="form-group col-md-3">
+                <div class="form-group noline row">
+                    <div class="form-group noline col-md-3">
                         <label for="poll_type">Poll Type</label>
                         <select id="poll_type" class="form-control" name="poll_type" onchange="addFilters();">
                             <option value="1">Public</option>
@@ -129,7 +131,7 @@
 
     <!--            Start and End Date of Poll-->
 
-                    <div class="form-group col-md-6">
+                    <div class="form-group noline col-md-6">
                         <label for="poll_range">Poll Starting and Ending Date</label>
                         <input type="text" name="poll_range" class="form-control" id="poll_range"  value="01/01/2018 - 01/15/2018" />
                     </div>
@@ -137,8 +139,8 @@
     <!--            Hidden Fields/ Visible when Poll Type is Private-->
                 <div id = "filter-container" style="display: none">
                     <!--            Gender Filter-->
-                    <div class="form-group column" style="position:relative; TOP:7px;">
-                        <div class="form-group col-md-10">
+                    <div class="form-group noline column" style="position:relative; TOP:7px;">
+                        <div class="form-group noline col-md-10">
                             <label for="radio"> Gender </label>
                             <div id = "radio">
                                 <input type="radio" id="all" name="gender" value="all"  style="position:relative; LEFT:25px;">
@@ -154,8 +156,8 @@
                         </div>
                     </div>
     <!--                Age Filter-->
-                    <div class="form-group column" style="position:relative; TOP:9px;">
-                        <div class="form-group col-md-10">
+                    <div class="form-group noline column" style="position:relative; TOP:9px;">
+                        <div class="form-group noline col-md-10">
                             <label for="radio2"> Age Group </label>
                                 <div id = "radio2">
                                     <input type="radio" name="age" value="all" style="position:relative; LEFT:25px;">
@@ -166,8 +168,8 @@
                         </div>
                     </div>
 <!--                    state-->
-                    <div class="form-group row" style="position:relative; TOP:9px;">
-                        <div class="form-group col-md-6">
+                    <div class="form-group noline row" style="position:relative; TOP:9px;">
+                        <div class="form-group noline col-md-6">
                             <label for="inputState">State</label>
                             <select id="inputState" class="form-control" name="state">
                                 <option value="all">Any</option>
@@ -210,9 +212,10 @@
                             </select>
                         </div>
                     </div>
+                    <br>
                     <h5>Invite Participants </h5> <br>
-                    <div class="form-group row">
-                        <div class="form-group col-md-6" style="text">
+                    <div class="form-group noline row">
+                        <div class="form-group noline col-md-6" style="text">
                             <label for="elist">Enter one email id in each line</label>
                             <textarea placeholder="raghavendra@gmail.com&#10;wm@gmail.com&#10;mai_inti_sundar_hu@gmail.com" name="email_list" id = "elist" rows="4" cols="38"></textarea>
                     </div>
