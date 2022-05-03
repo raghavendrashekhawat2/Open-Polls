@@ -21,42 +21,45 @@
         .h-custom {
         height: 80%;
         }
-
-        };
+    .form-control-lg, .form-control{
+        width : 200%
+    }
 </style>
 
 {% block main %}
-    <h5 style="position:absolute; TOP:200px; HEIGHT:400px; LEFT:820px;"> Login to Online Polling System</h5> <br><br>
-    <section class="vh-58" style="position:absolute; TOP:300px;">
-      <div class="container-fluid h-custom">
+    <h5 style="position:absolute; TOP:200px; LEFT:945px;"> Login to Online Polling System</h5> <br><br>
+    <section style="position:absolute; TOP:300px; WIDTH : 50% ">
         <div class="row d-flex justify-content-center align-items-center h-100">
-          <div class="col-md-9 col-lg-6 col-xl-5">
+          <div class="col-md-9 col-lg-6 col-xl-8">
             <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
               class="img-fluid" alt="Sample image">
           </div>
-          <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+        </div>
+    </section>
+    <section style="position:absolute; TOP:300px; left : 820px; width :75% ">
+      <div class="container-fluid h-custom">
+        <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
             <form action="\login", method="POST">
-
-              <!-- Email input -->
-              <div class="form-outline mb-4">
+                <!-- Email input -->
+                <div class="form-outline mb-4">
                   <label class="form-label" for="uname">Username</label>
                   <input type="text" id="uname" name="username" class="form-control form-control-lg" placeholder="Enter your username" />
-              </div>
+                </div>
 
-              <!-- Password input -->
-              <div class="form-outline mb-3">
+                <!-- Password input -->
+                <div class="form-outline mb-3">
                   <label class="form-label" for="password">Password</label>
                   <input type="password" id="password" name="pswd" class="form-control form-control-lg" placeholder="Enter password" />
-              </div>
+                </div>
 
-              <!-- OTP input -->
-              <div class="form-outline mb-3">
+                <!-- OTP input -->
+                <div class="form-outline mb-3">
                   <label class="form-label" for="ootp">Enter OTP</label>
                   <input type="password" id="ootp" name="otp" class="form-control form-control-lg" placeholder="Enter OTP" />
 
-              </div>
+                </div>
                 <!-- Login button -->
-              <div class="text-center text-lg-start mt-4 pt-2">
+                <div class="text-center text-lg-start mt-4 pt-2">
                 <button type="submit" class="btn btn-primary btn-lg"
                   style="padding-left: 2.5rem; padding-right: 2.5rem;">Login</button>
 
@@ -66,11 +69,9 @@
 
                 <p class="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <a href="\register"
                     class="link-danger">Register</a></p>
-
-              </div>
+                </div>
             </form>
 
-          </div>
         </div>
       </div>
 

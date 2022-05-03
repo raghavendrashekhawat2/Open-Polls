@@ -1,14 +1,12 @@
 html, body {
   margin:0;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 400;
-  background-color: #fff;
-  font-size: 16px;
-  -ms-text-size-adjust: 100%;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-
+  font-family: 'Poppins', sans-serif !important;
+  font-weight: 400 !important;
+  background-color: #fff ;
+  font-size: 16px !important;
+  -ms-text-size-adjust: 100% !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
 }
 
 .to_right{
@@ -26,7 +24,7 @@ html, body {
 /* Style the links inside the navigation bar */
 .main-nav a {
   float: left;
-  height: 100px;
+  height: 0px;
   display: block;
   color: #f2f2f2;
   text-transform: uppercase;
@@ -41,6 +39,7 @@ html, body {
 /* Change the color of links on hover */
 .main-nav a:hover {
   color: #f5a425;
+  text-decoration : none !important;
   transition-property: all;
   transition-duration: 0.3s;
   transition-timing-function: ease;
@@ -92,4 +91,24 @@ html, body {
     text-align: left;
   }
 }
+label {
+    display: inline-block;
+    margin-bottom: 0rem !important;
+}
 
+h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 0rem !important;
+}
+
+button, input, optgroup, select, textarea {
+    /* font-family: sans-serif; */
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 100%;
+    line-height: 1.15;
+    margin: 0;
+}
+
+.row{
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 0;
+}
