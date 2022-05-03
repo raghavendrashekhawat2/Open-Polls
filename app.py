@@ -283,16 +283,27 @@ def view_public_polls():
     conn = sqlite3.connect('Voting_database.db')
     c = conn.cursor()
     if request.method == "POST":
+        print("POST")
         val_0 = request.form.get("part")
         val_1 = request.form.get("res")
+        conn = sqlite3.connect('Voting_database.db')
+        c = conn.cursor()
         if val_0:
+            print("Participate = " + val_0)
             return render_template("participate.html")
         else:
-            return render_template("result.html")
+            poll_id = val_1
+            c.execute("""SELECT no_of_options FROM poll_filters WHERE pollid = :p""", {"p": poll_id})
+            option_count = c.fetchone()[0]
+            c.execute("""SELECT * FROM poll_results JOIN poll_data USING (pollid) WHERE pollid = :p """, {"p": poll_id})
+            row = c.fetchone()
+            conn.commit()
+            # print("Result = " + val_1)
+            return render_template("result.html", arr=row,n=option_count)
     else:
         # Can optimize this code. Its 3:24 AM and i am tooo lazyyyyyyyyyyyyyy rn
         # Get the data to be displayed from the database
-
+        print("GET")
         c.execute("""SELECT pollid from poll_filters WHERE public == 1""")
         poll_id = c.fetchall()
         poll_name = []
@@ -342,9 +353,17 @@ def private_polls():
         val_0 = request.form.get("part")
         val_1 = request.form.get("res")
         if val_0:
+            print("Participate = " + val_0)
             return render_template("participate.html")
         else:
-            return render_template("result.html")
+            poll_id = val_1
+            c.execute("""SELECT no_of_options FROM poll_filters WHERE pollid = :p""", {"p": poll_id})
+            option_count = c.fetchone()[0]
+            c.execute("""SELECT * FROM poll_results JOIN poll_data USING (pollid) WHERE pollid = :p """, {"p": poll_id})
+            row = c.fetchone()
+            conn.commit()
+            # print("Result = " + val_1)
+            return render_template("result.html", arr=row, n=option_count)
     else:
         c.execute("""SELECT email from user_data WHERE userid = :u """, {"u": 2})
         email = c.fetchone()[0]

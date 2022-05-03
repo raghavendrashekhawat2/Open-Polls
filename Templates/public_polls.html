@@ -21,7 +21,7 @@
 
     Public Polls
 </section>
-    <form action = "/view_public_polls" method="POST">
+    <form action = "/public_polls" method="POST">
         <main>
             <table>
                 <thead>
@@ -56,7 +56,7 @@
                             {% endif %}
                         </td>
                         <td class='select'>
-                            <button value='{{ data[i][0] }}' name="part" type="submit" class="button">Check Result</button>
+                            <button value='{{ data[i][0] }}' name="res" type="submit" class="button">Check Result</button>
                         </td>
                     </tr>
                   {% endfor %}
