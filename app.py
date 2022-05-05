@@ -106,8 +106,8 @@ def register():
         conn.commit()
 
         # Insert username and password in login_creds table
-        c.execute("INSERT INTO login_creds(username, password) VALUES(:u, :p)", {"u": username, "p": hashed_password})
-        conn.commit()
+        # c.execute("INSERT INTO login_creds(username, password) VALUES(:u, :p)", {"u": username, "p": hashed_password})
+        # conn.commit()
 
         # flash("Registered !!")
         print("Registered !!!!!")
@@ -131,7 +131,7 @@ def login():
         # opt = request.form.get("otp")
         print(password)
         # Check if user exists
-        if not (username and password):
+        if not (username or password):
             error_message = "Enter username and password"
             print(error_message)
             return render_template("apology.html", message=error_message)
@@ -140,7 +140,7 @@ def login():
         rows = c.fetchone()
 
         # Check if passwords match
-        if not check_password_hash(rows[2], password):
+        if rows == None or not check_password_hash(rows[2], password):
             error_message = "Invalid username and password"
             print(error_message)
             return render_template("apology.html", message=error_message)
@@ -224,6 +224,8 @@ def create_polls():
 
         public = 0
         private = 0
+        #poll_type == 1 means public
+        #poll_type == 2 means private
         if poll_type == '1':
             age = 'all'
             gender = 'all'
@@ -250,11 +252,12 @@ def create_polls():
         c.execute("INSERT INTO poll_results(op1, op2, op3, op4, op5, op6, op7, op8)"
                   " VALUES(:o1, :o2, :o3, :o4, :o5, :o6, :o7, :o8 )",
                   {"o1": zero, "o2": zero, "o3": zero, "o4": zero, "o5": zero, "o6": zero, "o7": zero, "o8": zero})
-        c.execute("SELECT pollid from poll_data WHERE pollname = :p", {"p": pname})
-        poll_id = c.fetchone()
-        table_name = "poll_no" + str(poll_id[0])
-        query = """CREATE TABLE {}( userid INTEGER PRIMARY KEY, Option INTEGER ) """.format(table_name)
-        c.execute(query)
+        if private == 1:
+            c.execute("SELECT pollid from poll_data WHERE pollname = :p", {"p": pname})
+            poll_id = c.fetchone()
+            table_name = "poll_no" + str(poll_id[0])
+            query = """CREATE TABLE {}( userid INTEGER PRIMARY KEY, Option INTEGER ) """.format(table_name)
+            c.execute(query)
         conn.commit()
         conn.close()
 
@@ -296,7 +299,7 @@ def view_public_polls():
             row = c.fetchone()
             conn.commit()
             # print("Participate = " + val_0)
-            return render_template("public_participate.html", arr=row, n=option_count)
+            return render_template("participate.html", arr=row, n=option_count)
         else:
             poll_id = val_1
             c.execute("""SELECT no_of_options FROM poll_filters WHERE pollid = :p""", {"p": poll_id})
@@ -359,8 +362,14 @@ def private_polls():
         val_0 = request.form.get("part")
         val_1 = request.form.get("res")
         if val_0:
-            print("Participate = " + val_0)
-            return render_template("participate.html")
+            poll_id = val_0
+            c.execute("""SELECT no_of_options FROM poll_filters WHERE pollid = :p""", {"p": poll_id})
+            option_count = c.fetchone()[0]
+            c.execute("""SELECT * FROM poll_data WHERE pollid = :p """, {"p": poll_id})
+            row = c.fetchone()
+            conn.commit()
+            # print("Participate = " + val_0)
+            return render_template("participate.html", arr=row, n=option_count)
         else:
             poll_id = val_1
             c.execute("""SELECT no_of_options FROM poll_filters WHERE pollid = :p""", {"p": poll_id})
@@ -371,7 +380,7 @@ def private_polls():
             # print("Result = " + val_1)
             return render_template("result.html", arr=row, n=option_count)
     else:
-        c.execute("""SELECT email from user_data WHERE userid = :u """, {"u": 2})
+        c.execute("""SELECT email from user_data WHERE userid = :u """, {"u": session["user_id"]})
         email = c.fetchone()[0]
         c.execute("""SELECT pollid from poll_filters WHERE private == 1""")
         poll_id = c.fetchall()
@@ -403,6 +412,7 @@ def private_polls():
         # Organize data into a single list
         # Check if poll has expired
         for i in range(len(final_p)):
+            # [pollid, poll_name, start_date, end_date, option_selected, date_valid_or_not]
             data = [final_p[i], poll_name[i][0], convert_date(poll_dates[i][0]), convert_date(poll_dates[i][1]),
                     final_options[i]]
             # Convert Starting data from yyyy/mm/dd to 4 April
@@ -416,21 +426,47 @@ def private_polls():
 
         return render_template("private_polls.html", data=final_data, n=len(final_data))
 
-@app.route("/public_participate", methods=["GET", "POST"])
+
+@app.route("/participate", methods=["GET", "POST"])
 @login_required
-def public_participate():
+def participate():
     if request.method == "POST":
         # Connect to the database
+        print("THIS ONE")
         conn = sqlite3.connect('Voting_database.db')
         c = conn.cursor()
         poll_id = request.form.get("submit")
         option = request.form.get("option")
+        c.execute("SELECT private FROM poll_filters WHERE pollid = :p",{"p": poll_id})
+        private = str(c.fetchone()[0])
+        print("option = "+option)
+        print("poll id = "+poll_id)
+        if private == "1":
+            user_id = session["user_id"]
+            print("user id = "+str(user_id))
+            c.execute("SELECT email FROM user_data WHERE userid = :u ", {"u": user_id})
+            email = c.fetchone()[0]
+            print("email = "+email)
+            table_name = "poll_no" + poll_id
+            print(table_name)
+            query = """SELECT option from {} where emailid == :e """.format(table_name)
+            print(query)
+            c.execute(query, {"e": email})
+            opv = str(c.fetchone()[0])
+            print(opv)
+            if opv[0] != "0":
+                print("HERE")
+                return redirect("/home")
+            c.execute("""UPDATE {} SET option = :o WHERE emailid == :e""".format(table_name), {"o": option, "e": email})
+            conn.commit()
         opx = "op" + option
         query = "UPDATE poll_results SET " + opx + " = " + opx + " + 1 WHERE pollid = :p"
-        c.execute(query,{"p":poll_id})
+        c.execute(query, {"p":poll_id})
         conn.commit()
         return redirect("/home")
     else:
         return redirect("/home")
+
+
 if __name__ == '___main__':
     app.run()

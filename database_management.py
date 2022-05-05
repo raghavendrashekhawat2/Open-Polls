@@ -4,16 +4,30 @@ from helper import convert_date, compare_date
 
 conn = sqlite3.connect('Voting_database.db')
 c = conn.cursor()
-
+option = 0
+table_name = "poll_no4"
+email = "raghavendrashekhawat1@gmail.com"
+# c.execute("""UPDATE {} SET option = :o""".format(table_name), {"o": option})
 # c.execute(""" INSERT INTO poll_no5(emailid, option) VALUES('raghavendrashekhawat1@gmail.com', 0)""")
+poll_id = 2
+c.execute("""UPDATE {} SET option = :o WHERE emailid == :e""".format(table_name), {"o": option, "e": email})
+query = """SELECT * from {}""".format(table_name)
+c.execute(query)
+rows = c.fetchall()
+print(rows)
+# print()
+# c.execute("SELECT * FROM login_creds ")
+# rows = c.fetchall()
+# for row in rows:
+#     print(row)
 
-c.execute("""SELECT * FROM poll_results JOIN poll_data USING (pollid) WHERE pollid = :p """, {"p": 2})
-
-data = c.fetchone()
-print(data)
-c.execute("""SELECT no_of_options FROM poll_filters WHERE pollid = :p""", {"p" : 2})
-data = c.fetchone()
-print(data[0])
+# c.execute("""SELECT * FROM poll_results JOIN poll_data USING (pollid) WHERE pollid = :p """, {"p": 2})
+#
+# data = c.fetchone()
+# print(data)
+# c.execute("""SELECT no_of_options FROM poll_filters WHERE pollid = :p""", {"p" : 2})
+# data = c.fetchone()
+# print(data[0])
 
 # c.execute("""SELECT email from user_data WHERE userid = :u """, {"u": 2})
 # email = c.fetchone()[0]
