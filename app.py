@@ -68,7 +68,7 @@ def register():
         if not (f_name and l_name and username and email and password and re_password and dob and state and mobile and
                 gender):
             # print("debug time", gender, "\n", state, "\n", f_name, "\n", l_name, "\n", username, "\n", password, "\n",
-                  # re_password, "\n", dob, "\n", mobile)
+            # re_password, "\n", dob, "\n", mobile)
             error_message = "All the fields in the form must be filled"
             print(error_message)
             return render_template("apology.html", message=error_message)
@@ -121,7 +121,7 @@ def register():
 def login():
     conn = sqlite3.connect('Voting_database.db')
     c = conn.cursor()
-    # if you are already logged in you cant access the login page
+    # if you are already logged in you can't access the login page
     if session.get("user_id"):
         return redirect("/home")
 
@@ -210,17 +210,17 @@ def create_polls():
                 print(error_message)
                 return render_template("apology.html", message=error_message)
 
-            # form date format -> mm/dd/yyyy
-            start_date = (poll_range[0:11]).strip()
-            expiry_date = (poll_range[13:]).strip()
+        # form date format -> mm/dd/yyyy
+        start_date = (poll_range[0:11]).strip()
+        expiry_date = (poll_range[13:]).strip()
 
-            # sql date format -> yyyy/mm/dd
-            # converting to date from form format to sql date format
+        # sql date format -> yyyy/mm/dd
+        # converting to date from form format to sql date format
 
-            formatted_start_date = datetime.strptime(start_date, '%m/%d/%Y').strftime('%Y/%m/%d')
-            formatted_expiry_date = datetime.strptime(expiry_date, '%m/%d/%Y').strftime('%Y/%m/%d')
-            pname = pname.strip()
-            ques = ques.strip()
+        formatted_start_date = datetime.datetime.strptime(start_date, '%m/%d/%Y').strftime('%Y/%m/%d')
+        formatted_expiry_date = datetime.datetime.strptime(expiry_date, '%m/%d/%Y').strftime('%Y/%m/%d')
+        pname = pname.strip()
+        ques = ques.strip()
 
         public = 0
         private = 0
@@ -289,8 +289,14 @@ def view_public_polls():
         conn = sqlite3.connect('Voting_database.db')
         c = conn.cursor()
         if val_0:
-            print("Participate = " + val_0)
-            return render_template("participate.html")
+            poll_id = val_0
+            c.execute("""SELECT no_of_options FROM poll_filters WHERE pollid = :p""", {"p": poll_id})
+            option_count = c.fetchone()[0]
+            c.execute("""SELECT * FROM poll_data WHERE pollid = :p """, {"p": poll_id})
+            row = c.fetchone()
+            conn.commit()
+            # print("Participate = " + val_0)
+            return render_template("public_participate.html", arr=row, n=option_count)
         else:
             poll_id = val_1
             c.execute("""SELECT no_of_options FROM poll_filters WHERE pollid = :p""", {"p": poll_id})
@@ -299,7 +305,7 @@ def view_public_polls():
             row = c.fetchone()
             conn.commit()
             # print("Result = " + val_1)
-            return render_template("result.html", arr=row,n=option_count)
+            return render_template("result.html", arr=row, n=option_count)
     else:
         # Can optimize this code. Its 3:24 AM and i am tooo lazyyyyyyyyyyyyyy rn
         # Get the data to be displayed from the database
@@ -410,6 +416,21 @@ def private_polls():
 
         return render_template("private_polls.html", data=final_data, n=len(final_data))
 
-
+@app.route("/public_participate", methods=["GET", "POST"])
+@login_required
+def public_participate():
+    if request.method == "POST":
+        # Connect to the database
+        conn = sqlite3.connect('Voting_database.db')
+        c = conn.cursor()
+        poll_id = request.form.get("submit")
+        option = request.form.get("option")
+        opx = "op" + option
+        query = "UPDATE poll_results SET " + opx + " = " + opx + " + 1 WHERE pollid = :p"
+        c.execute(query,{"p":poll_id})
+        conn.commit()
+        return redirect("/home")
+    else:
+        return redirect("/home")
 if __name__ == '___main__':
     app.run()

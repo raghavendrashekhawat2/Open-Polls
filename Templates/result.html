@@ -1,15 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Results</title>
-</head>
-<body>
-    <h2 class = "question">{{arr[11]}}</h2>
-    {% for i in range(n) %}
-        <div>
-            <h3>{{arr[i + 12]}} = {{arr[i + 1]}}</h3>
-        </div>
-    {% endfor %}
-</body>
-</html>
+{% extends "layout.html" %}
+{% block title %}
+    <title>
+        Results
+    </title>
+{% endblock %}
+
+{% block main %}
+
+<div style="position = absolute;">
+    <h2 class = "question" >{{arr[11]}}</h2>
+    <br>
+    <br>
+        {% for i in range(n) %}
+            <div>
+                <h3> {{"abcdefghijklmnopqrstuvwxyz"[i]}}. {{arr[i + 12]}} = {{arr[i + 1]}}</h3>
+            </div>
+        {% endfor %}
+</div>
+{% endblock %}
