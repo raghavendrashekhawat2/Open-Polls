@@ -9,15 +9,15 @@ def convert_date(d):
                      'November', 'December']
     ordinal_string = ['st', 'nd', 'th']
 
-    if int(d[9] + d[9]) == 1:
+    if int(d[8] + d[9]) == 1:
         res += 'st '
-    elif int(d[9] + d[9]) == 2:
+    elif int(d[8] + d[9]) == 2:
         res += 'nd '
     else:
         res += "th "
 
     res += months_string[int(d[5] + d[6])]
-    res += (d[0] + d[1] + d[2] + d[3])
+    res += (" " + d[0] + d[1] + d[2] + d[3])
     return res
 
 
