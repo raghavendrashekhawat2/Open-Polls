@@ -29,6 +29,9 @@ print(rows)
 # data = c.fetchone()
 # print(data[0])
 
+c.execute("""SELECT pollid from poll_data WHERE owner == 2""")
+poll_id = c.fetchall()
+print(poll_id)
 # c.execute("""SELECT email from user_data WHERE userid = :u """, {"u": 2})
 # email = c.fetchone()[0]
 # c.execute("""SELECT pollid from poll_filters WHERE private == 1""")
@@ -71,10 +74,6 @@ print(rows)
 #         data.append(1)
 #     final_data.append(data)
 # print(final_data)
-
-
-
-
 
 
 # c.execute(""" UPDATE "user_data" SET "userid"='2', "First_Name"='Raghavendra', "Last_Name"='Shekhawat', "Dob"='1999-12-04', "State"='Rajasthan', "Mob_Number"='9027592291', "Gender"='Male', "Email"='raghavendrashekhawat1@gmail.com' WHERE "rowid" = 2 """)

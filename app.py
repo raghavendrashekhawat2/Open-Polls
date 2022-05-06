@@ -2,7 +2,7 @@ import datetime
 import re
 import sqlite3
 
-from flask import Flask, flash, redirect, render_template, request, session, jsonify
+from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from tempfile import mkdtemp
@@ -106,8 +106,8 @@ def register():
         conn.commit()
 
         # Insert username and password in login_creds table
-        # c.execute("INSERT INTO login_creds(username, password) VALUES(:u, :p)", {"u": username, "p": hashed_password})
-        # conn.commit()
+        c.execute("INSERT INTO login_creds(username, password) VALUES(:u, :p)", {"u": username, "p": hashed_password})
+        conn.commit()
 
         # flash("Registered !!")
         print("Registered !!!!!")
@@ -140,7 +140,7 @@ def login():
         rows = c.fetchone()
 
         # Check if passwords match
-        if rows == None or not check_password_hash(rows[2], password):
+        if rows is None or not check_password_hash(rows[2], password):
             error_message = "Invalid username and password"
             print(error_message)
             return render_template("apology.html", message=error_message)
@@ -224,8 +224,8 @@ def create_polls():
 
         public = 0
         private = 0
-        #poll_type == 1 means public
-        #poll_type == 2 means private
+        # poll_type == 1 means public
+        # poll_type == 2 means private
         if poll_type == '1':
             age = 'all'
             gender = 'all'
@@ -323,7 +323,6 @@ def view_public_polls():
             c.execute("""SELECT start, end from poll_filters WHERE pollid == :p""", {"p": idx[0]})
             poll_dates.append(c.fetchone())
 
-        curr_date = datetime.date.today()
         final_data = []
 
         # Organize data into a single list
@@ -406,7 +405,6 @@ def private_polls():
             c.execute("""SELECT start, end from poll_filters WHERE pollid == :p""", {"p": idx})
             poll_dates.append(c.fetchone())
 
-        curr_date = datetime.date.today()
         final_data = []
 
         # Organize data into a single list
@@ -437,7 +435,7 @@ def participate():
         c = conn.cursor()
         poll_id = request.form.get("submit")
         option = request.form.get("option")
-        c.execute("SELECT private FROM poll_filters WHERE pollid = :p",{"p": poll_id})
+        c.execute("SELECT private FROM poll_filters WHERE pollid = :p", {"p": poll_id})
         private = str(c.fetchone()[0])
         print("option = "+option)
         print("poll id = "+poll_id)
@@ -461,11 +459,72 @@ def participate():
             conn.commit()
         opx = "op" + option
         query = "UPDATE poll_results SET " + opx + " = " + opx + " + 1 WHERE pollid = :p"
-        c.execute(query, {"p":poll_id})
+        c.execute(query, {"p": poll_id})
         conn.commit()
         return redirect("/home")
     else:
         return redirect("/home")
+
+
+@app.route("/your_polls", methods=["GET", "POST"])
+@login_required
+def your_polls():
+    conn = sqlite3.connect('Voting_database.db')
+    c = conn.cursor()
+    if request.method == "POST":
+        val_0 = request.form.get("part")
+        val_1 = request.form.get("res")
+        if val_0:
+            poll_id = val_0
+            c.execute("""SELECT no_of_options FROM poll_filters WHERE pollid = :p""", {"p": poll_id})
+            option_count = c.fetchone()[0]
+            c.execute("""SELECT * FROM poll_data WHERE pollid = :p """, {"p": poll_id})
+            row = c.fetchone()
+            conn.commit()
+            # print("Participate = " + val_0)
+            return render_template("participate.html", arr=row, n=option_count)
+        else:
+            poll_id = val_1
+            c.execute("""SELECT no_of_options FROM poll_filters WHERE pollid = :p""", {"p": poll_id})
+            option_count = c.fetchone()[0]
+            c.execute("""SELECT * FROM poll_results JOIN poll_data USING (pollid) WHERE pollid = :p """, {"p": poll_id})
+            row = c.fetchone()
+            conn.commit()
+            # print("Result = " + val_1)
+            return render_template("result.html", arr=row, n=option_count)
+
+    else:
+        c.execute("""SELECT pollid from poll_data WHERE owner == :o""", {"o": session["user_id"]})
+        poll_id = c.fetchall()
+
+        poll_name = []
+        poll_dates = []
+        for idx in poll_id:
+            c.execute("""SELECT pollname from poll_data WHERE pollid == :p""", {"p": idx[0]})
+            poll_name.append(c.fetchone())
+            c.execute("""SELECT start, end from poll_filters WHERE pollid == :p""", {"p": idx[0]})
+            poll_dates.append(c.fetchone())
+
+        final_data = []
+
+        # Organize data into a single list
+        # Check if poll has expired
+        for i in range(len(poll_dates)):
+            data = [poll_id[i][0], poll_name[i][0], convert_date(poll_dates[i][0]), convert_date(poll_dates[i][1])]
+            # Convert Starting data from yyyy/mm/dd to 4 April
+            if not compare_date(poll_dates[i][0]):
+                data.append(0)
+            else:
+                # Convert Ending data from yyyy/mm/dd to 4 April
+                data.append(1)
+            final_data.append(data)
+
+        print(final_data)
+        # Delete extra lists
+        del poll_id
+        del poll_name
+        del poll_dates
+        return render_template("your_polls.html", data=final_data, n=len(final_data))
 
 
 if __name__ == '___main__':

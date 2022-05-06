@@ -99,7 +99,16 @@ query = """CREATE TABLE {}( emailid INTEGER PRIMARY KEY, Option INTEGER ) """.fo
 c.execute(query)
 
 
+Extras
+
 
 s_no     access_key      option
 1           400
 2           403
+
+
+
+all pollids which are private
+email = form userdata
+
+check poll_no + id where email = curr email
