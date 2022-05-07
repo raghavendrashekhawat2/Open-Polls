@@ -52,7 +52,7 @@
                             {% if data[i][5] == 1 and data[i][4] == 0 %}
                                 <button value='{{ data[i][0] }}' name="part" type="submit" class="button">Participate now</button>
                             {% else %}
-                               {{ "abcdefghijklmnopqrstuvwxyz"[data[i][4] - 1] }}
+                               Option {{ "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[data[i][4] - 1] }}
                             {% endif %}
                         </td>
                         <td class='select'>
