@@ -13,6 +13,8 @@ html {
 }
 
 body {
+  height: 100%;
+  width: 100%;
   background-color: #5BB9B8;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
