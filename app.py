@@ -1,13 +1,14 @@
 import datetime
 import re
 import sqlite3
+import random
 
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from tempfile import mkdtemp
 from functools import wraps
-
+from twilio.rest import Client
 from helper import convert_date, compare_date
 
 app = Flask(__name__)
@@ -252,6 +253,7 @@ def create_polls():
         c.execute("INSERT INTO poll_results(op1, op2, op3, op4, op5, op6, op7, op8)"
                   " VALUES(:o1, :o2, :o3, :o4, :o5, :o6, :o7, :o8 )",
                   {"o1": zero, "o2": zero, "o3": zero, "o4": zero, "o5": zero, "o6": zero, "o7": zero, "o8": zero})
+        table_name = ""
         if private == 1:
             c.execute("SELECT pollid from poll_data WHERE pollname = :p", {"p": pname})
             poll_id = c.fetchone()
@@ -526,6 +528,21 @@ def your_polls():
         del poll_dates
         return render_template("your_polls.html", data=final_data, n=len(final_data))
 
+@app.route('/otp_verification')
+def otp_verification():
+    account_sid = 'AC020ee65d20fe40fcdf9b694b1cb80616'
+    auth_token = '325ad76020aa47bbf177e5402ee1c9a0'
+    OTP = str(random.randint(1000, 9999))
+    print(OTP)
+    # client = Client(account_sid, auth_token)
+    # message = client.messages.create(
+    #     from_='+18624658393',
+    #     body='Your OTP Is = ' + (OTP),
+    #     to='+917579249700'
+    # )
+    session["OTP"] = OTP
+    # print(message.sid)
+    return("nothing")
 
 if __name__ == '___main__':
     app.run()
