@@ -84,7 +84,7 @@
                 <div class="form-group noline row">
                     <div class="form-group noline col-md-8" style="text">
                         <label for="p_name">Poll Name</label>
-                        <input type="text" class="form-control" placeholder="Poll Name" name="poll_name" id = "p_name">
+                        <input type="text" class="form-control" placeholder="Poll Name" name="poll_name" id = "p_name" required>
                     </div>
                 </div>
 
@@ -92,14 +92,14 @@
                 <div class="form-group noline row">
                     <div class="form-group noline col-md-6" style="text">
                         <label for="ques">Poll Question</label>
-                        <textarea placeholder="Enter your Question" name="question" id = "ques" rows="5" cols="38"></textarea>
+                        <textarea placeholder="Enter your Question" name="question" id = "ques" rows="5" cols="38" required></textarea>
                     </div>
                 </div>
 
                 <! no of Options -->
                 <div class="form-horizontal">
                     <div class="form-group noline">
-                        <label for="options_no" class="col-md-6 control-label" style="padding-left : 0px !important">Select number of options</label>
+                        <label for="options_no" class="col-md-6 control-label" style="padding-left : 0px !important" >Select number of options</label>
                         <select id="options_no" class="form-horizontal" name="options_numbers" onchange="addFields();">
                             <option value="2">2</option>
                             <option value="3">3</option>

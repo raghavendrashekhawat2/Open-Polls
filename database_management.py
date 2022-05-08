@@ -4,15 +4,16 @@ from helper import convert_date, compare_date
 
 conn = sqlite3.connect('Voting_database.db')
 c = conn.cursor()
-option = 0
-table_name = "poll_no4"
-email = "raghavendrashekhawat1@gmail.com"
+# option = 0
+# table_name = "poll_no4"
+# email = "raghavendrashekhawat1@gmail.com"
 # c.execute("""UPDATE {} SET option = :o""".format(table_name), {"o": option})
 # c.execute(""" INSERT INTO poll_no5(emailid, option) VALUES('raghavendrashekhawat1@gmail.com', 0)""")
-poll_id = 2
-c.execute("""UPDATE {} SET option = :o WHERE emailid == :e""".format(table_name), {"o": option, "e": email})
-query = """SELECT * from {}""".format(table_name)
-c.execute(query)
+# poll_id = 2
+# c.execute("""UPDATE {} SET option = :o WHERE emailid == :e""".format(table_name), {"o": option, "e": email})
+# query = """SELECT * from {}""".format(table_name)
+# c.execute(query)
+c.execute("SELECT * FROM ")
 rows = c.fetchall()
 print(rows)
 # print()

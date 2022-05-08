@@ -129,8 +129,16 @@ def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("pswd")
-        # opt = request.form.get("otp")
+        otp = request.form.get("otp")
         print(password)
+        if not otp:
+            error_message = "ENTER OTP"
+            return render_template("apology.html", message=error_message)
+
+        if session.get("OTP") is None or otp != session["OTP"]:
+            error_message = "INVALID OTP"
+            return render_template("apology.html", message=error_message)
+
         # Check if user exists
         if not (username or password):
             error_message = "Enter username and password"
