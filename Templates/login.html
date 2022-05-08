@@ -3,7 +3,19 @@
     <title>
         Login
     </title>
-<script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type=text/javascript>
+$(function() {
+$('a#test').on('click',function(e) {
+e.preventDefault()
+$.getJSON('/otp_verification',
+function(data) {
+//do nothing
+});
+return false;
+});
+});
+
 var count = 8;
 function fun()
 {
@@ -11,14 +23,14 @@ function fun()
     var y = document.getElementById("para");
     original = x.style.display;
     x.style.display = "none";
-    count = 91;
+    count = 11;
     fun2();
     setTimeout(function()
     {
        x.style.display = original;
        y.style.display = "none";
     }
-    ,90000);   //90000 = 90seconds
+    ,10000);   //90000 = 90seconds
 }
 
 
@@ -94,9 +106,11 @@ function fun2()
                 <button type="submit" class="btn btn-primary btn-lg"
                   style="padding-left: 2.5rem; padding-right: 2.5rem;">Login</button>
 
-                <!-- Request otp button -->
-                <button id="btn" onclick="fun()" type="button" class="btn btn-primary btn-lg"
-                  style="padding-left: 2.5rem; padding-right: 2.5rem;">Request Otp</button>
+<!--                 Request otp button-->
+                    <a href=# id=test>
+                        <button id="btn" onclick="fun()" type="button" class="btn btn-primary btn-lg"
+                          style="padding-left: 2.5rem; padding-right: 2.5rem;">Request Otp</button>
+                    </a>
                 <div id="para" style="display: none; padding-left: 2.5rem; padding-right: 2.5rem;">
                 </div>
 
@@ -107,7 +121,6 @@ function fun2()
 
         </div>
       </div>
-
 
     </section>
 
