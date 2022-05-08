@@ -96,24 +96,19 @@ def register():
             error_message = "Email_id already exists"
             print(error_message)
             return render_template("apology.html", message=error_message)
-
         # Generate password hash
         hashed_password = generate_password_hash(password)
-
         # Insert user data in user_data table
         c.execute("INSERT INTO user_data(First_Name, Last_Name, DOB, State, Mob_Number, Gender, Email)"
                   " VALUES(:f, :l, :d, :s, :p, :g, :e )",
                   {"f": f_name, "l": l_name, "d": dob, "s": state, "p": mobile, "g": gender, "e": email})
         conn.commit()
-
         # Insert username and password in login_creds table
         c.execute("INSERT INTO login_creds(username, password) VALUES(:u, :p)", {"u": username, "p": hashed_password})
         conn.commit()
-
-        # flash("Registered !!")
+        flash("Registered !!")
         print("Registered !!!!!")
         return render_template("login.html")
-
     else:
         return render_template("register.html")
 
@@ -277,7 +272,7 @@ def create_polls():
         for mail in valid_mails:
             query = """ INSERT INTO {}(emailid, option) VAlUES(:m, :o) """.format(table_name)
             c.execute(query, {"m": mail, "o": 0})
-
+        flash("Poll Created")
         return redirect("/home")
     else:
         return render_template("create_polls.html")
@@ -286,7 +281,13 @@ def create_polls():
 @app.route("/home", methods=["GET"])
 @login_required
 def home():
-    return render_template("home.html")
+    conn = sqlite3.connect('Voting_database.db')
+    c = conn.cursor()
+    c.execute("""SELECT COUNT(userid) FROM login_creds""")
+    user_count = c.fetchone()[0]
+    c.execute("""SELECT COUNT(*) FROM poll_data""")
+    total_polls = c.fetchone()[0]
+    return render_template("home.html", u_count=user_count, t_polls=total_polls)
 
 
 @app.route("/public_polls", methods=["GET", "POST"])
@@ -494,14 +495,15 @@ def your_polls():
             # print("Participate = " + val_0)
             return render_template("participate.html", arr=row, n=option_count)
         else:
-            poll_id = val_1
+            poll_id = int(val_1)
             c.execute("""SELECT no_of_options FROM poll_filters WHERE pollid = :p""", {"p": poll_id})
             option_count = c.fetchone()[0]
             c.execute("""SELECT * FROM poll_results JOIN poll_data USING (pollid) WHERE pollid = :p """, {"p": poll_id})
             row = c.fetchone()
             conn.commit()
             # print("Result = " + val_1)
-            return render_template("result.html", arr=row, n=option_count)
+            return redirect("/results", poll_id)
+            # return render_template("result.html", arr=row, n=option_count)
 
     else:
         c.execute("""SELECT pollid from poll_data WHERE owner == :o""", {"o": session["user_id"]})
@@ -516,7 +518,6 @@ def your_polls():
             poll_dates.append(c.fetchone())
 
         final_data = []
-
         # Organize data into a single list
         # Check if poll has expired
         for i in range(len(poll_dates)):
@@ -536,6 +537,7 @@ def your_polls():
         del poll_dates
         return render_template("your_polls.html", data=final_data, n=len(final_data))
 
+
 @app.route('/otp_verification')
 def otp_verification():
     account_sid = 'AC020ee65d20fe40fcdf9b694b1cb80616'
@@ -551,6 +553,14 @@ def otp_verification():
     session["OTP"] = OTP
     # print(message.sid)
     return("nothing")
+
+
+@app.route("/results", methods=["GET", "POST"])
+@login_required
+def results(p_id):
+    conn = sqlite3.connect('Voting_database.db')
+    c = conn.cursor()
+
 
 if __name__ == '___main__':
     app.run()

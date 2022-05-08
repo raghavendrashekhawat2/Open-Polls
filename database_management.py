@@ -13,9 +13,7 @@ c = conn.cursor()
 # c.execute("""UPDATE {} SET option = :o WHERE emailid == :e""".format(table_name), {"o": option, "e": email})
 # query = """SELECT * from {}""".format(table_name)
 # c.execute(query)
-c.execute("SELECT * FROM ")
-rows = c.fetchall()
-print(rows)
+
 # print()
 # c.execute("SELECT * FROM login_creds ")
 # rows = c.fetchall()
@@ -30,9 +28,9 @@ print(rows)
 # data = c.fetchone()
 # print(data[0])
 
-c.execute("""SELECT pollid from poll_data WHERE owner == 2""")
-poll_id = c.fetchall()
-print(poll_id)
+c.execute("""SELECT COUNT(userid) FROM login_creds""")
+user_count = c.fetchone()[0]
+print(user_count)
 # c.execute("""SELECT email from user_data WHERE userid = :u """, {"u": 2})
 # email = c.fetchone()[0]
 # c.execute("""SELECT pollid from poll_filters WHERE private == 1""")
