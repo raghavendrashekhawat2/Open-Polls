@@ -561,6 +561,7 @@ def results(p_id):
     conn = sqlite3.connect('Voting_database.db')
     c = conn.cursor()
 
+    c.execute("""SELECT pollname from poll_data WHERE pollid == :p""", {"p": idx[0]})
 
 if __name__ == '___main__':
     app.run()
