@@ -16,12 +16,12 @@ def convert_date(d):
     else:
         res += "th "
 
-    res += months_string[int(d[5] + d[6])]
+    res += months_string[int(d[5] + d[6]) - 1]
     res += (" " + d[0] + d[1] + d[2] + d[3])
     return res
 
 
-def compare_date(val):
+def is_in_past(val):
     d = int(val[8] + val[9])
     m = int(val[5] + val[6])
     y = int(val[0] + val[1] + val[2] + val[3])
@@ -50,6 +50,35 @@ def compare_date(val):
         return 0
     return 0
 
+def is_in_future(val1):
+    curr_date = date.today()
+    val = str(curr_date.strftime("%Y/%m/%d"))
+
+    d = int(val[8] + val[9])
+    m = int(val[5] + val[6])
+    y = int(val[0] + val[1] + val[2] + val[3])
+
+
+    cd = int(val1[8] + val1[9])
+    cm = int(val1[5] + val1[6])
+    cy = int(val1[0] + val1[1] + val1[2] + val1[3])
+
+    # 24-12-2021 26-12-2022
+    if cy > y:
+        return 1
+    elif cy < y:
+        return 0
+
+    if cm > m:
+        return 1
+    elif cm < m:
+        return 0
+
+    if cd > d:
+        return 1
+    elif cd < d:
+        return 0
+    return 0
 
 if __name__ == '__main__':
     r = compare_date("2022/06/15")

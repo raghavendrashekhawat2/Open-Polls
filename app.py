@@ -9,7 +9,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from tempfile import mkdtemp
 from functools import wraps
 from twilio.rest import Client
-from helper import convert_date, compare_date
+from helper import convert_date, is_in_future, is_in_past
 
 app = Flask(__name__)
 
@@ -339,9 +339,12 @@ def view_public_polls():
         # Organize data into a single list
         # Check if poll has expired
         for i in range(len(poll_dates)):
+            print(poll_dates[i][0] + "is " + convert_date(poll_dates[i][0]))
             data = [poll_id[i][0], poll_name[i][0], convert_date(poll_dates[i][0]), convert_date(poll_dates[i][1])]
             # Convert Starting data from yyyy/mm/dd to 4 April
-            if not compare_date(poll_dates[i][0]):
+            if is_in_future(poll_dates[i][0]):
+                data.append(2)
+            elif is_in_past(poll_dates[i][1]):
                 data.append(0)
             else:
                 # Convert Ending data from yyyy/mm/dd to 4 April
@@ -425,7 +428,9 @@ def private_polls():
             data = [final_p[i], poll_name[i][0], convert_date(poll_dates[i][0]), convert_date(poll_dates[i][1]),
                     final_options[i]]
             # Convert Starting data from yyyy/mm/dd to 4 April
-            if not compare_date(poll_dates[i][0]):
+            if is_in_future(poll_dates[i][0]):
+                data.append(2)
+            elif is_in_past(poll_dates[i][1]):
                 data.append(0)
             else:
                 # Convert Ending data from yyyy/mm/dd to 4 April
@@ -508,6 +513,8 @@ def your_polls():
     else:
         c.execute("""SELECT pollid from poll_data WHERE owner == :o""", {"o": session["user_id"]})
         poll_id = c.fetchall()
+
+
 
         poll_name = []
         poll_dates = []

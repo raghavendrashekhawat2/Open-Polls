@@ -90,12 +90,12 @@ c.execute("""CREATE TABLE poll_results (
 
 table6 -> "poll_no" + poll_id
 
-email_id          Option
+emailid          Option
   3               0-8            0-> not voted
   4               0-8
 
 table_name = "poll_no" + str(poll_id[0])
-query = """CREATE TABLE {}( emailid INTEGER PRIMARY KEY, Option INTEGER ) """.format(table_name)
+query = """CREATE TABLE {}( emailid text PRIMARY KEY, Option INTEGER ) """.format(table_name)
 c.execute(query)
 
 
