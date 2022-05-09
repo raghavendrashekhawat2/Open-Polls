@@ -51,12 +51,18 @@
                         <td class='select'>
                             {% if data[i][4] == 1 %}
                                 <button value='{{ data[i][0] }}' name="part" type="submit" class="button">Participate now</button>
+                            {% elif data[i][4] == 2 %}
+                                Yet to begin
                             {% else %}
                                 Closed
                             {% endif %}
                         </td>
                         <td class='select'>
+                            {% if data[i][4] == 0 %}
                             <button value='{{ data[i][0] }}' name="res" type="submit" class="button">Check Result</button>
+                            {% else %}
+                                Yet to be Announced
+                            {% endif %}
                         </td>
                     </tr>
                   {% endfor %}
