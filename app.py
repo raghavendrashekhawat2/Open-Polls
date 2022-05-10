@@ -42,7 +42,16 @@ def login_required(f):
 
 @app.route("/")
 def index():
-    return render_template("welcome.html")
+    conn = sqlite3.connect('Voting_database.db')
+    c = conn.cursor()
+    c.execute("SELECT pollid FROM poll_filters WHERE public == 1 ")
+    rows = []
+    public_pollids = c.fetchall()
+    for row in public_pollids:
+        c.execute("SELECT pollname, quest, pollid FROM poll_data WHERE pollid == :p", {"p": row[0]})
+        this_data = c.fetchone()
+        rows.append(this_data)
+    return render_template("welcome.html",arr = rows,n = len(rows))
 
 
 # Function for /register route
@@ -284,15 +293,35 @@ def create_polls():
 def home():
     conn = sqlite3.connect('Voting_database.db')
     c = conn.cursor()
+    c.execute("""SELECT email from user_data WHERE userid = :u """, {"u": session["user_id"]})
+    email = c.fetchone()[0]
+    c.execute("SELECT pollid FROM poll_filters WHERE private == 1 ")
+    private_pollids = c.fetchall()
+    final_p = []
+    # Check if user has access to the poll if yes then add to final_p and final_options
+    for idx in private_pollids:
+        table_name = "poll_no" + str(idx[0])
+        c.execute("""SELECT option from {} where emailid == :o """.format(table_name), {"o": email})
+        option = c.fetchone()
+        print(option)
+        if option is not None:
+            final_p.append(idx[0])
+
+    rows = []
+    for row in final_p:
+        c.execute("SELECT pollname, quest, pollid FROM poll_data WHERE pollid == :p", {"p": row})
+        this_data = c.fetchone()
+        rows.append(this_data)
+
     c.execute("""SELECT COUNT(userid) FROM login_creds""")
     user_count = c.fetchone()[0]
     c.execute("""SELECT COUNT(*) FROM poll_data""")
     total_polls = c.fetchone()[0]
-    return render_template("home.html", u_count=user_count, t_polls=total_polls)
+
+    return render_template("home.html", arr = rows, n = len(rows), u_count=user_count, t_polls=total_polls)
 
 
 @app.route("/public_polls", methods=["GET", "POST"])
-@login_required
 def view_public_polls():
     # Connect to the database
     conn = sqlite3.connect('Voting_database.db')
@@ -443,7 +472,6 @@ def private_polls():
 
 
 @app.route("/participate", methods=["GET", "POST"])
-@login_required
 def participate():
     if request.method == "POST":
         # Connect to the database
@@ -452,12 +480,14 @@ def participate():
         c = conn.cursor()
         poll_id = request.form.get("submit")
         option = request.form.get("option")
-        c.execute("SELECT private FROM poll_filters WHERE pollid = :p", {"p": poll_id})
+        c.execute("SELECT private FROM poll_filters WHERE pollid = :p",{"p": poll_id})
         private = str(c.fetchone()[0])
         print("option = "+option)
         print("poll id = "+poll_id)
         if private == "1":
             user_id = session["user_id"]
+            if user_id == None:
+                return redirect("/home")
             print("user id = "+str(user_id))
             c.execute("SELECT email FROM user_data WHERE userid = :u ", {"u": user_id})
             email = c.fetchone()[0]
@@ -476,8 +506,11 @@ def participate():
             conn.commit()
         opx = "op" + option
         query = "UPDATE poll_results SET " + opx + " = " + opx + " + 1 WHERE pollid = :p"
-        c.execute(query, {"p": poll_id})
+        c.execute(query, {"p":poll_id})
         conn.commit()
+        if private != "1":
+            if session.get("user_id") is None:
+                return redirect("/")
         return redirect("/home")
     else:
         return redirect("/home")
