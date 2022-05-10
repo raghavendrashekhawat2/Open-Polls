@@ -261,10 +261,9 @@ def create_polls():
             c.execute("SELECT pollid from poll_data WHERE pollname = :p", {"p": pname})
             poll_id = c.fetchone()
             table_name = "poll_no" + str(poll_id[0])
-            query = """CREATE TABLE {}( userid INTEGER PRIMARY KEY, Option INTEGER ) """.format(table_name)
+            query = """CREATE TABLE {}( emailid text PRIMARY KEY, Option INTEGER ) """.format(table_name)
             c.execute(query)
-        conn.commit()
-        conn.close()
+
 
         # Only valid mails added invalid mails not added. Flash message on home page later that these mails
         # have not been added
@@ -273,6 +272,8 @@ def create_polls():
             query = """ INSERT INTO {}(emailid, option) VAlUES(:m, :o) """.format(table_name)
             c.execute(query, {"m": mail, "o": 0})
         flash("Poll Created")
+        conn.commit()
+        conn.close()
         return redirect("/home")
     else:
         return render_template("create_polls.html")
@@ -530,7 +531,7 @@ def your_polls():
         for i in range(len(poll_dates)):
             data = [poll_id[i][0], poll_name[i][0], convert_date(poll_dates[i][0]), convert_date(poll_dates[i][1])]
             # Convert Starting data from yyyy/mm/dd to 4 April
-            if not compare_date(poll_dates[i][0]):
+            if is_in_past(poll_dates[i][0]):
                 data.append(0)
             else:
                 # Convert Ending data from yyyy/mm/dd to 4 April
