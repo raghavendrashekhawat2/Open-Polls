@@ -44,13 +44,21 @@ def login_required(f):
 def index():
     conn = sqlite3.connect('Voting_database.db')
     c = conn.cursor()
-    c.execute("SELECT pollid FROM poll_filters WHERE public == 1 ")
+    c.execute("SELECT pollid,end,start FROM poll_filters WHERE public == 1 ")
     rows = []
     public_pollids = c.fetchall()
     for row in public_pollids:
-        c.execute("SELECT pollname, quest, pollid FROM poll_data WHERE pollid == :p", {"p": row[0]})
-        this_data = c.fetchone()
-        rows.append(this_data)
+
+        if not(is_in_future(row[2] or is_in_past(row[1]))):
+            c.execute("SELECT pollname, quest, pollid FROM poll_data WHERE pollid == :p", {"p": row[0]})
+            raw_data = (c.fetchone())
+            this_data = list(raw_data)
+            month = int(row[1][5] + row[1][6]) - 1
+            day = int(row[1][8] + row[1][9])
+            this_data.append(month)
+            this_data.append(day)
+            print(this_data)
+            rows.append(this_data)
     return render_template("welcome.html", arr=rows, n=len(rows))
 
 

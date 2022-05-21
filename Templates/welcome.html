@@ -37,6 +37,9 @@ https://templatemo.com/tm-569-edu-meeting
     font-weight: 600;
     display: inline-block;
     margin-bottom: 15px;
+    text-align: left;
+    app:layout_constraintWidth_default="wrap";
+    width:250px;
     }
   </style>
   </head>
@@ -97,13 +100,18 @@ https://templatemo.com/tm-569-edu-meeting
               <div class="row grid">
                 {% for i in range(n) %}
                 <div class="col-lg-4 templatemo-item-col all soon">
+
                   <div class="meeting-item">
+
                     <div class="thumb">
                       <img src="static/l2/assets/images/meeting-0{{(i % 9) + 1}}.jpg" alt="" >
                     </div>
-                    <div class="down-content">
-                      <button value='{{ arr[i][2] }}' name="part" type="submit" class="button">{{arr[i][0]}}</button>
-                      <p>{{arr[i][1]}}</p>
+                    <div class="down-content" style="word-wrap: break-word;">
+                      <div class="date">
+                          <h6>{{["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEPT","OCT","NOV","DEC"][arr[i][3]]}} <span>{{arr[i][4]}}</span></h6>
+                      </div>
+                      <button value='{{ arr[i][2] }}' name="part" type="submit" class="button" style="word-wrap:break word">{{arr[i][0]}}</button>
+                      <p >{{arr[i][1]}}</p>
                     </div>
                   </div>
                 </div>
