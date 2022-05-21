@@ -6,6 +6,49 @@
         margin-bottom : 0rem !important;
     }
 </style>
+<script type=text/javascript>
+$(function() {
+$('a#test').on('click',function(e) {
+e.preventDefault()
+$.getJSON('/otp_verification',
+function(data) {
+//do nothing
+});
+return false;
+});
+});
+
+var count = 8;
+function fun()
+{
+    var x = document.getElementById("btn");
+    var y = document.getElementById("para");
+    original = x.style.display;
+    x.style.display = "none";
+    count = 11;
+    fun2();
+    setTimeout(function()
+    {
+       x.style.display = original;
+       y.style.display = "none";
+    }
+    ,10000);   //90000 = 90seconds
+}
+
+
+function fun2()
+{
+    var y = document.getElementById("para");
+    y.style = "position:relative; TOP:30px; LEFT:180px; display:inline-block; font-size: 1.25rem;";
+    count = count - 1;
+    y.innerHTML = count + " sec";
+    const myTime =  setTimeout(fun2, 1000);
+    if(count <= 1)
+    {
+        clearTimeout(myTime);
+    }
+}
+</script>
 {% endblock %}
 
 {% block main %}
@@ -17,11 +60,11 @@
             <! First Name and Last Name -->
             <div class="form-group row">
                 <div class="form-group col-md-6" style="text">
-                    <label for="f_name">First Name</label>
+                    <label for="f_name">First Name*</label>
                     <input type="text" class="form-control" id="f_name" placeholder="First Name" name="first_name" required>
                 </div>
                 <div class="form-group col-md-6" style="text">
-                    <label for="l_name">Last Name</label>
+                    <label for="l_name">Last Name*</label>
                     <input type="text" class="form-control" id="l_name" placeholder="Last Name" name="last_name" required>
                 </div>
             </div>
@@ -29,15 +72,19 @@
             <! Username -->
             <div class="form-group row">
                 <div class="form-group col-md-6" style="text">
-                    <label for="u_name">Username</label>
+                    <label for="u_name">Username*</label>
                     <input type="text" class="form-control" id="u_name" placeholder="Enter your Username" name="username" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="mobile">Mobile Number*</label>
+                    <input type="tel" class="form-control" id="mobile" name="phone" placeholder="+911234567890" required>
                 </div>
             </div>
 
             <! Email-Id -->
             <div class="form-group row">
                 <div class="form-group col-md-6" style="text">
-                    <label for="e_id">Email</label>
+                    <label for="e_id">Email*</label>
                     <input type="email" class="form-control" id="e_id" placeholder="Enter your Email id" name="email" required>
                 </div>
             </div>
@@ -46,11 +93,11 @@
 
             <div class="form-group row">
                 <div class="form-group col-md-6">
-                    <label for="pswd">Password</label>
+                    <label for="pswd">Password*</label>
                     <input type="password" class="form-control" id="pswd" placeholder="Password" name="password" required>
                 </div>
                 <div class="form-group col-md-6">
-                   <label for="pswd">Confirm Password</label>
+                   <label for="pswd">Confirm Password*</label>
                    <input type="password" class="form-control" id="re_pswd" placeholder="Confirm Password" name="re_password" required>
                 </div>
             </div>
@@ -58,7 +105,7 @@
             <! DOB -->
             <div class="form-group row">
                 <div class="form-group col-md-6">
-                    <label for="dob">Date of Birth</label>
+                    <label for="dob">Date of Birth*</label>
                     <input type="date" class="form-control" id="dob" name="dateofbirth" required>
                 </div>
             </div>
@@ -66,7 +113,7 @@
             <! State and Mobile Number -->
             <div class="form-group row">
                 <div class="form-group col-md-6">
-                    <label for="inputState">State</label>
+                    <label for="inputState">State*</label>
                     <select id="inputState" class="form-control" name="state" required>
                         <option value="Andhra Pradesh">Andhra Pradesh</option>
                         <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
@@ -106,28 +153,33 @@
                         <option value="West Bengal">West Bengal</option>
                     </select>
                 </div>
-
                 <div class="form-group col-md-6">
-                    <label for="mobile">Mobile Number</label>
-                    <input type="tel" class="form-control" id="mobile" name="phone" required>
+                    <label for="ootp">Enter OTP*</label>
+                    <input type="text" class="form-control" id="ootp" name="ootp" placeholder="1234" required>
                 </div>
+
             </div>
 
             <! Gender -->
             <div class="form-group column" style="position:relative; TOP:5px;">
                 <div class="form-group col-md-10">
-                    <label for="radio"> Gender </label>
-                    <input type="radio" id="male" name="gender" value="Male"  style="position:relative; LEFT:25px;">
+                    <label for="radio"> Gender* </label>
+                    <input type="radio" id="male" name="gender" value="Male"  style="position:relative; LEFT:25px;" required>
                     <label for="male"  style="position:relative; LEFT:27px;" >Male</label>
-                    <input type="radio" id="female" name="gender" value="Female" style="position:relative; LEFT:52px;">
+                    <input type="radio" id="female" name="gender" value="Female" style="position:relative; LEFT:52px;" required>
                     <label for="female" style="position:relative; LEFT:54px;">Female</label>
-                    <input type="radio" id="other" name="gender" value="Other" style="position:relative; LEFT:79px;">
+                    <input type="radio" id="other" name="gender" value="Other" style="position:relative; LEFT:79px;" required>
                     <label for="other" style="position:relative; LEFT:81px;">Other</label> <br>
                 </div>
             </div>
-
-            <button style="position:relative; TOP:30px; LEFT:200px;" type="submit" class="btn btn-primary">Register</button>
-
+            <div>
+                <button style="position:relative; TOP:30px; LEFT:120px;" type="submit" class="btn btn-primary">Register</button>
+                <a href=# id=test>
+                <button id="btn" onclick="fun()" type="button" class="btn btn-primary " style="position:relative; TOP:30px; LEFT:180px;">Request Otp</button>
+                </a>
+                <div id="para" style="display: none; position:relative; TOP:30px; LEFT:180px;">
+                </div>
+            </div>
         </form>
     </section>
 {% endblock %}
