@@ -318,10 +318,17 @@ def home():
     total_polls = c.fetchone()[0]
 
     # Get all public polls
-    c.execute("SELECT pollid FROM poll_filters WHERE public == 1 ")
-    pub_polls =
+    c.execute("SELECT pollid, end FROM poll_filters WHERE public == 1 ")
+    pub_polls = c.fetchall()
+    f_pub_polls = []
+    for i in pub_polls:
+        c.execute(""" SELECT pollname FROM poll_data WHERE pollid == :p """, {"p": i[0]})
+        name = c.fetchone()[0]
+        t = [name, i[1]]
+        f_pub_polls.append(t)
 
-    return render_template("home.html", arr=rows, n=len(rows), u_count=user_count, t_polls=total_polls)
+    nn = len(f_pub_polls)
+    return render_template("home.html", arr=rows, n=len(rows), u_count=user_count, t_polls=total_polls, public_poll_data=f_pub_polls, nn=nn)
 
 
 @app.route("/public_polls", methods=["GET", "POST"])

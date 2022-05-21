@@ -1,9 +1,29 @@
 import datetime
 import sqlite3
-from helper import convert_date, compare_date
+from helper import convert_date
 
 conn = sqlite3.connect('Voting_database.db')
 c = conn.cursor()
+
+c.execute("SELECT pollid, end FROM poll_filters WHERE public == 1 ")
+pub_polls = c.fetchall()
+f_pub_polls = []
+for i in pub_polls:
+    print(i[0])
+    c.execute(""" SELECT pollname FROM poll_data WHERE pollid == :p """, {"p": i[0]})
+    name = c.fetchone()[0]
+    print(name)
+    t = [name, i[1]]
+    f_pub_polls.append(t)
+
+
+print(f_pub_polls)
+
+
+
+
+
+
 # option = 0
 # table_name = "poll_no4"
 # email = "raghavendrashekhawat1@gmail.com"
