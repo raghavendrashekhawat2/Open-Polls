@@ -21,34 +21,35 @@
 
     Public Polls
 </section>
-    <form action = "/public_polls" method="POST">
-        <main>
-            <table>
-                <thead>
-                    <tr>
-                        <th> S No </th>
-                        <th> Poll Name</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Participate Now</th>
-                        <th>Check Result</th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <th colspan='5'>
-                          Year: 2022
-                        </th>
-                    </tr>
-                </tfoot>
-                <tbody>
-                    {% for i in range(n) %}
-                    <tr>
-                        <td> {{ i+1 }} </td>
-                        <td> {{ data[i][1] }} </td>
-                        <td> {{ data[i][2] }} </td>
-                        <td> {{ data[i][3] }} </td>
-                        <td class='select'>
+
+    <main>
+        <table>
+            <thead>
+                <tr>
+                    <th> S No </th>
+                    <th> Poll Name</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Participate Now</th>
+                    <th>Check Result</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th colspan='5'>
+                      Year: 2022
+                    </th>
+                </tr>
+            </tfoot>
+            <tbody>
+                {% for i in range(n) %}
+                <tr>
+                    <td> {{ i+1 }} </td>
+                    <td> {{ data[i][1] }} </td>
+                    <td> {{ data[i][2] }} </td>
+                    <td> {{ data[i][3] }} </td>
+                    <td class='select'>
+                        <form action = "/public_polls" method="POST">
                             {% if data[i][4] == 1 %}
                                 <button value='{{ data[i][0] }}' name="part" type="submit" class="button">Participate now</button>
                             {% elif data[i][4] == 2 %}
@@ -56,18 +57,21 @@
                             {% else %}
                                 Closed
                             {% endif %}
-                        </td>
-                        <td class='select'>
+                        </form>
+                    </td>
+                    <td class='select'>
+                        <form action = "/results" method="POST">
                             {% if data[i][4] == 0 %}
                             <button value='{{ data[i][0] }}' name="res" type="submit" class="button">Check Result</button>
                             {% else %}
                                 Yet to be Announced
                             {% endif %}
-                        </td>
-                    </tr>
-                  {% endfor %}
-                </tbody>
-            </table>
-        </main>
-    </form>
+                        </form>
+                    </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+        </table>
+    </main>
+
 {% endblock %}

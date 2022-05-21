@@ -21,7 +21,7 @@
 
     Your Polls
 </section>
-    <form action = "/private_polls" method="POST">
+
         <main>
             <table>
                 <thead>
@@ -49,15 +49,18 @@
                         <td> {{ data[i][2] }} </td>
                         <td> {{ data[i][3] }} </td>
                         <td class='select'>
-                            <button value='{{ data[i][0] }}' name="part" type="submit" class="button">Edit Poll</button>
+                            <form action = "/private_polls" method="POST">
+                                <button value='{{ data[i][0] }}' name="part" type="submit" class="button">Edit Poll</button>
+                            </form>
                         </td>
                         <td class='select'>
-                            <button value='{{ data[i][0] }}' name="res" type="submit" class="button">Check Result</button>
+                            <form action = "/results" method="POST">
+                                <button value='{{ data[i][0] }}' name="res" type="submit" class="button">Check Result</button>
+                            </form>
                         </td>
                     </tr>
                   {% endfor %}
                 </tbody>
             </table>
         </main>
-    </form>
 {% endblock %}

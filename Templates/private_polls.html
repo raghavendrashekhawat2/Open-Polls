@@ -21,7 +21,7 @@
 
     Private Polls
 </section>
-    <form action = "/private_polls" method="POST">
+
         <main>
             <table>
                 <thead>
@@ -49,27 +49,30 @@
                         <td> {{ data[i][2] }} </td>
                         <td> {{ data[i][3] }} </td>
                         <td class='select'>
-                            {% if data[i][4] != 0 %}
-                               Option {{ "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[data[i][4] - 1] }}
-                            {% elif data[i][5] == 1  %}
-                                <button value='{{ data[i][0] }}' name="part" type="submit" class="button">Participate now</button>
-                            {% elif data[i][5] == 2 %}
-                                Yet to begin
-                            {% else %}
-                                Closed
-                            {% endif %}
+                            <form action = "/private_polls" method="POST">
+                                {% if data[i][4] != 0 %}
+                                   Option {{ "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[data[i][4] - 1] }}
+                                {% elif data[i][5] == 1  %}
+                                    <button value='{{ data[i][0] }}' name="part" type="submit" class="button">Participate now</button>
+                                {% elif data[i][5] == 2 %}
+                                    Yet to begin
+                                {% else %}
+                                    Closed
+                                {% endif %}
+                            </form>
                         </td>
                         <td class='select'>
-                            {% if data[i][5] == 0 %}
-                            <button value='{{ data[i][0] }}' name="res" type="submit" class="button">Check Result</button>
-                            {% else %}
-                                Yet to be Announced
-                            {% endif %}
+                            <form action = "/results" method="POST">
+                                {% if data[i][5] == 0 %}
+                                <button value='{{ data[i][0] }}' name="res" type="submit" class="button">Check Result</button>
+                                {% else %}
+                                    Yet to be Announced
+                                {% endif %}
+                            </form>
                         </td>
                     </tr>
                   {% endfor %}
                 </tbody>
             </table>
         </main>
-    </form>
 {% endblock %}

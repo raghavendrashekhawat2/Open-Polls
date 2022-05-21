@@ -3,7 +3,7 @@ import re
 import sqlite3
 import random
 
-from flask import Flask, flash, redirect, render_template, request, session
+from flask import Flask, flash, redirect, render_template, request, session, url_for
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from tempfile import mkdtemp
@@ -143,7 +143,6 @@ def login():
         username = request.form.get("username")
         password = request.form.get("pswd")
 
-
         # Check if user exists
         if not (username or password):
             error_message = "Enter username and password"
@@ -274,7 +273,6 @@ def create_polls():
             query = """CREATE TABLE {}( emailid text PRIMARY KEY, Option INTEGER ) """.format(table_name)
             c.execute(query)
 
-
         # Only valid mails added invalid mails not added. Flash message on home page later that these mails
         # have not been added
 
@@ -319,7 +317,11 @@ def home():
     c.execute("""SELECT COUNT(*) FROM poll_data""")
     total_polls = c.fetchone()[0]
 
-    return render_template("home.html", arr = rows, n = len(rows), u_count=user_count, t_polls=total_polls)
+    # Get all public polls
+    c.execute("SELECT pollid FROM poll_filters WHERE public == 1 ")
+    pub_polls =
+
+    return render_template("home.html", arr=rows, n=len(rows), u_count=user_count, t_polls=total_polls)
 
 
 @app.route("/public_polls", methods=["GET", "POST"])
@@ -330,7 +332,6 @@ def view_public_polls():
     if request.method == "POST":
         print("POST")
         val_0 = request.form.get("part")
-        val_1 = request.form.get("res")
         conn = sqlite3.connect('Voting_database.db')
         c = conn.cursor()
         if val_0:
@@ -342,15 +343,7 @@ def view_public_polls():
             conn.commit()
             # print("Participate = " + val_0)
             return render_template("participate.html", arr=row, n=option_count)
-        else:
-            poll_id = val_1
-            c.execute("""SELECT no_of_options FROM poll_filters WHERE pollid = :p""", {"p": poll_id})
-            option_count = c.fetchone()[0]
-            c.execute("""SELECT * FROM poll_results JOIN poll_data USING (pollid) WHERE pollid = :p """, {"p": poll_id})
-            row = c.fetchone()
-            conn.commit()
-            # print("Result = " + val_1)
-            return render_template("result.html", arr=row, n=option_count)
+
     else:
         # Can optimize this code. Its 3:24 AM and i am tooo lazyyyyyyyyyyyyyy rn
         # Get the data to be displayed from the database
@@ -404,7 +397,7 @@ def private_polls():
     c = conn.cursor()
     if request.method == "POST":
         val_0 = request.form.get("part")
-        val_1 = request.form.get("res")
+
         if val_0:
             poll_id = val_0
             c.execute("""SELECT no_of_options FROM poll_filters WHERE pollid = :p""", {"p": poll_id})
@@ -414,15 +407,7 @@ def private_polls():
             conn.commit()
             # print("Participate = " + val_0)
             return render_template("participate.html", arr=row, n=option_count)
-        else:
-            poll_id = val_1
-            c.execute("""SELECT no_of_options FROM poll_filters WHERE pollid = :p""", {"p": poll_id})
-            option_count = c.fetchone()[0]
-            c.execute("""SELECT * FROM poll_results JOIN poll_data USING (pollid) WHERE pollid = :p """, {"p": poll_id})
-            row = c.fetchone()
-            conn.commit()
-            # print("Result = " + val_1)
-            return render_template("result.html", arr=row, n=option_count)
+
     else:
         c.execute("""SELECT email from user_data WHERE userid = :u """, {"u": session["user_id"]})
         email = c.fetchone()[0]
@@ -481,13 +466,13 @@ def participate():
         c = conn.cursor()
         poll_id = request.form.get("submit")
         option = request.form.get("option")
-        c.execute("SELECT private FROM poll_filters WHERE pollid = :p",{"p": poll_id})
+        c.execute("SELECT private FROM poll_filters WHERE pollid = :p", {"p": poll_id})
         private = str(c.fetchone()[0])
         print("option = "+option)
         print("poll id = "+poll_id)
         if private == "1":
             user_id = session["user_id"]
-            if user_id == None:
+            if user_id is None:
                 return redirect("/home")
             print("user id = "+str(user_id))
             c.execute("SELECT email FROM user_data WHERE userid = :u ", {"u": user_id})
@@ -507,7 +492,7 @@ def participate():
             conn.commit()
         opx = "op" + option
         query = "UPDATE poll_results SET " + opx + " = " + opx + " + 1 WHERE pollid = :p"
-        c.execute(query, {"p":poll_id})
+        c.execute(query, {"p": poll_id})
         conn.commit()
         if private != "1":
             if session.get("user_id") is None:
@@ -524,7 +509,6 @@ def your_polls():
     c = conn.cursor()
     if request.method == "POST":
         val_0 = request.form.get("part")
-        val_1 = request.form.get("res")
         if val_0:
             poll_id = val_0
             c.execute("""SELECT no_of_options FROM poll_filters WHERE pollid = :p""", {"p": poll_id})
@@ -534,22 +518,10 @@ def your_polls():
             conn.commit()
             # print("Participate = " + val_0)
             return render_template("participate.html", arr=row, n=option_count)
-        else:
-            poll_id = int(val_1)
-            c.execute("""SELECT no_of_options FROM poll_filters WHERE pollid = :p""", {"p": poll_id})
-            option_count = c.fetchone()[0]
-            c.execute("""SELECT * FROM poll_results JOIN poll_data USING (pollid) WHERE pollid = :p """, {"p": poll_id})
-            row = c.fetchone()
-            conn.commit()
-            # print("Result = " + val_1)
-            return redirect("/results", poll_id)
-            # return render_template("result.html", arr=row, n=option_count)
 
     else:
         c.execute("""SELECT pollid from poll_data WHERE owner == :o""", {"o": session["user_id"]})
         poll_id = c.fetchall()
-
-
 
         poll_name = []
         poll_dates = []
@@ -594,16 +566,44 @@ def otp_verification():
     # )
     session["OTP"] = OTP
     # print(message.sid)
-    return("nothing")
+    return "nothing"
 
 
 @app.route("/results", methods=["GET", "POST"])
 @login_required
-def results(p_id):
+def results():
     conn = sqlite3.connect('Voting_database.db')
     c = conn.cursor()
+    if request.method == "POST":
+        poll_id = request.form.get("res")
+        # Data required for results
+        # Poll Name, poll questions, poll options
+        # poll results
 
-    c.execute("""SELECT pollname from poll_data WHERE pollid == :p""", {"p": idx[0]})
+        c.execute("""SELECT * from poll_data WHERE pollid == :p""", {"p": poll_id})
+        poll_data = c.fetchone()
+        print([poll_data])
+
+        c.execute("""SELECT no_of_options from poll_filters WHERE pollid == :p""", {"p": poll_id})
+        n = int(c.fetchone()[0])
+        c.execute("""SELECT * from poll_results WHERE pollid == :p""", {"p": poll_id})
+        poll_res = c.fetchone()
+        chart_data = {}
+        chart_data['abcd'] = 'abcddd'
+        total = 0
+        for i in range(n):
+            chart_data[poll_data[i+4]] = int(poll_res[i+1])
+            total += int(poll_res[i+1])
+
+        print(chart_data)
+
+
+        conn.commit()
+        return render_template("result.html", data=chart_data, t_data=poll_data, sum=total, p_res=poll_res, n=n)
+
+    else:
+        print("abcd")
+
 
 if __name__ == '___main__':
     app.run()
