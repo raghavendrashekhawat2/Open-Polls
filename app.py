@@ -51,7 +51,7 @@ def index():
         c.execute("SELECT pollname, quest, pollid FROM poll_data WHERE pollid == :p", {"p": row[0]})
         this_data = c.fetchone()
         rows.append(this_data)
-    return render_template("welcome.html",arr = rows,n = len(rows))
+    return render_template("welcome.html", arr=rows, n=len(rows))
 
 
 # Function for /register route
@@ -73,6 +73,15 @@ def register():
         state = request.form.get("state")
         mobile = request.form.get("phone")
         gender = request.form.get("gender")
+        otp = request.form.get("otp")
+
+        if not otp:
+            error_message = "ENTER OTP"
+            return render_template("apology.html", message=error_message)
+
+        if session.get("OTP") is None or otp != session["OTP"]:
+            error_message = "INVALID OTP"
+            return render_template("apology.html", message=error_message)
 
         # Check if all the fields are filled
         if not (f_name and l_name and username and email and password and re_password and dob and state and mobile and
@@ -133,15 +142,7 @@ def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("pswd")
-        otp = request.form.get("otp")
-        print(password)
-        if not otp:
-            error_message = "ENTER OTP"
-            return render_template("apology.html", message=error_message)
 
-        if session.get("OTP") is None or otp != session["OTP"]:
-            error_message = "INVALID OTP"
-            return render_template("apology.html", message=error_message)
 
         # Check if user exists
         if not (username or password):
