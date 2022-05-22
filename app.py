@@ -61,7 +61,6 @@ def register():
     # Connect to the database
     conn = sqlite3.connect('Voting_database.db')
     c = conn.cursor()
-    print("yes")
     if request.method == "POST":
         f_name = request.form.get("first_name")
         l_name = request.form.get("last_name")
@@ -561,16 +560,17 @@ def your_polls():
 
 @app.route('/otp_verification')
 def otp_verification():
+    print("hi")
     account_sid = 'AC020ee65d20fe40fcdf9b694b1cb80616'
     auth_token = '325ad76020aa47bbf177e5402ee1c9a0'
     OTP = str(random.randint(1000, 9999))
     print(OTP)
-    # client = Client(account_sid, auth_token)
-    # message = client.messages.create(
-    #     from_='+18624658393',
-    #     body='Your OTP Is = ' + (OTP),
-    #     to='+917579249700'
-    # )
+    client = Client(account_sid, auth_token)
+    message = client.messages.create(
+        from_='+18624658393',
+        body='Your OTP Is = ' + (OTP),
+        to='+917579249700'
+    )
     session["OTP"] = OTP
     # print(message.sid)
     return "nothing"
